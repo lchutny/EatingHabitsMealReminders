@@ -1,0 +1,1422 @@
+---
+title: "Affecting Mealtime Choices through Smartphone Reminders"
+subtitle: "Personalizing the Fight against Climate Change - A Randomized Control Study"
+author: |
+  | Diana Iftimie  \<dianai@berkeley.edu\>
+  | Alex Zhou Thorp
+  | Laura Chutny  \<lchutny@berkeley.edu\>
+date: '`r format(Sys.time(), "%d %B %Y")`'
+header-includes:
+   - \usepackage{subcaption}
+   - \usepackage{float}
+output:
+  pdf_document:
+    number_sections: true
+    fig_caption: true
+    df_print: kable
+    latex_engine: xelatex
+    extra_dependencies:
+    - dcolumn
+    - float
+    - rotating
+fontsize: 11pt
+---  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H')
+```
+
+\pagenumbering{gobble}
+\newpage
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\pagenumbering{gobble}
+\listoffigures
+\listoftables
+\newpage  
+
+
+```{r packages_chunk, results='hide',message=FALSE, include=FALSE}
+library(blockTools)
+library(data.table)
+library(knitr)
+library(foreign)
+library(lmtest)
+library(sandwich)
+library(bit64)
+library(stargazer)
+library(lme4)
+library(dplyr)
+library(skimr)
+library(tidyverse)
+library(gridExtra)
+library(multiwayvcov)
+library(latex2exp)
+```
+
+
+```{r stderror_function, echo=FALSE}
+# Function to calculate the Basic Standard Error of the mean for the sample
+sem <- function(x){
+  # SE of the mean
+  sqrt(var(x,na.rm=TRUE)/length(x[!is.na(x)]))
+}
+```
+
+\pagenumbering{arabic}
+
+
+# Research Question: Can We Change Eating Behaviours through SMS Reminders?
+
+We are constantly bombarded with bad news about the warming climate, the impact this will someday have on our lives and the ability for our planet to sustain the human race. Mostly, we scroll through the news stories and social media memes and shake our heads. We cheer on people like Greta Thunberg and follow the news of climate strikes but fail to take concrete action in our own lives. This phenomenon has been studied (Gifford, 2011), and many groups have plans and suggestions to help humans take action (“How You Can Help Fight Climate Change,” 2017; “The Lazy Person’s Guide to Saving the World,” n.d.). Appealing to someone’s altruism to get them to change their behaviours because it is ‘good for the planet’ appears insufficient to effect the scale of change that is needed (“What works for behaviour change?,” 2018). An easy win for the planet and health would be to encourage people to eat less meat; the question is: how do we effect that change?  
+
+By making use of technology that is in (almost) everyone’s pocket (Global Mobile Consumer Trends, 2nd edition, 2017; Silver, 2019), the smartphone, we hope to determine if meat-eating behaviour can be changed. Our research question is: Can a smartphone-based daily reminder about the impacts of eating meat on the environment, in combination with recipe suggestions for meatless meals, result in eating less meat?   Our focus in this study is the consumption of land-based meat - including beef, pork, chicken, turkey, etc, and anything derived from such meat (e.g. bacon bits).
+
+There are many observational and experimental studies on behaviour modification with SMS reminders (Fjeldsoe, Marshall, & Miller, 2009; Monroe, Lofgren, Sartini, & Greene, 2015; Stea & Pickering, 2019; Akhu-Zaheya, 2017). Many of the experimental studies are concerned with improving diet behaviour, improving medication adherence or increasing daily activity and often show a change in (short-term) behaviour. With this study, we hope to contribute to the body of work that supports (or fails to support) the utility of smartphone reminders with respect to behaviour change. Our focus in this paper is to determine if messaging related to climate change elicits the desired response of eating less meat.  
+
+Note that, in this paper, most code is suppressed in the main paper, and can be found in Appendix F. The reference book that informed many aspects of this study was Field Experiments (Gerber & Green, 2012).
+
+# Hypothesis  
+
+We hypothesize that when participants are sent an SMS reminder which includes facts about the effects of eating land-based meat on the environment along with a recipe for a meatless meal, that they will eat less meat. We believe this may result in a decrease in meat eaten based on successful RCT studies (see above) that indicate the ability to change health related behaviours with SMS reminders (also called nudging)  (Cole-Lewis & Kershaw, 2010). Similarly, nudges of other types have been successful at influencing environmental action (Kallbekken & Sælen, 2013; Ayres, Raseman, & Shih, 2009), thus we are hopeful that the nudges used in this study - both the SMS reminder and providing a meatless recipe - will produce the desired response of eating less meat.  
+
+# Experimental Design & Administration
+
+## Potential Outcomes  
+
+This is a single factor experimental design. The outcome that we will measure in this experiment is the self-reported number of meals and snacks (eating occasions (EO)) eaten each day during the course of the experiment and the number of these eating occasions where meat is eaten. These measures are recorded through evening SMS surveys. To better isolate treatment impact on participants, we establish a baseline measure ($Y^{Baseline}_i(t)$) by surveying every participant in both treatment and control every day for three days. Then, for the seven days of the treatment phase, participants in treatment receive an SMS reminder with a fact about the impact of meat production on the environment, along with a link to a meatless recipe (blog post, video, etc). Participants in control receive no facts or recipes. Both groups continue to receive identical evening surveys for the seven treatment days.   
+
+The potential outcome in control, $Y_i(0)$, is the response of each participant in the situation where no treatment messages about climate are sent. We expect under this circumstance that the daily meat consumption would not change from the baseline period to the experimental period (that is, the difference $Y_i(0) - Y^{Baseline}_i(0)$ equals zero in expectation for all participants). 
+
+The potential outcome in treatment, $Y_i(1)$, is the response of each participant when treatment messages are sent. In this situation, we expect the daily meat consumption may change during the course of the experiment when compared with meat consumption habits collected during the baseline period. The possible values for $Y_i(1)$ are from zero to the maximum number of eating occasions per person per day. We can think about this as a difference from baseline as well, thus $Y_i(1) - Y^{Baseline}_i(1)$ could be less than zero (participant ate less meat per day in treatment compared to their baseline), zero (participant ate the same amount of meat per day in treatment compared to their baseline) or greater than zero (participant ate more meat per day during treatment compared to their baseline).
+
+## Experiment Administration
+
+### Enrollment Survey
+
+A short survey was used to enroll participants into the experiment using Google Forms (see Appendix H). This survey established pre-treatment information that could be used in blocking participants into groups. It also contained pre-treatment questions that the experimenters thought might provide information that would be useful as covariates for analysis of any possible heterogeneous treatment effects. The questions were designed to give participants the general idea they were involved in a study regarding eating habits, but not necessarily meat consumption, in order to avoid pre-treatment bias or changes in the control group. Finally, this enrollment survey yielded phone-numbers from participants and provided consent to enroll in the SMS survey over the course of 10 days. Participants had to be 18 years of age or older and have a phone number in the United States or Canada due to the limitations of the texting platform we used.  
+
+### Texting Platform
+
+In order to communicate with participants via their provided phone number, the study required the construction of a customized texting platform that was able to perform four core functionalities:
+
+* Confirm participant phone numbers at 11AM on the first day
+* Administer the evening meal inquiry survey at 8PM in the participants' timezone
+* Administer treatment messages to participants assigned to treatment at 11AM in the participant's timezone
+* Inform participants of the final post-study survey at 11AM on the final day
+
+In order to accomplish these tasks, we constructed a platform centered around the use of Azure SQL Database, Twilio Studio Flows, and Azure Functions. The SQL Database was mainly used for housing all data related to participants necessary for the execution of the experiment, including their phone number, their name (for personalizing greetings), their timezone, their assignment to treatment, and any information collected on participants over the course of the study (including treatment administration and outcome measures). Twilio Studio Flows were used to automate the text-message engagement with participants and collect necessary information from participants for each of the 4 tasks described above. Azure Functions were used both to trigger the engagements via Twilio and to record data collected on participants for the study.
+
+Using this technology, any one of the 4 interactions listed above would  occur with the following generic sequence of events:
+
+1) A system clock triggers an Azure Function Time Trigger to start the appropriate task
+2) The Azure Function logic then queries the SQL Database to identify which participants need to be engaged and in what way (e.g. Treatment vs. Control)
+3) The Azure Function logic then prepares the engagement with any necessary information and triggers the appropriate Twilio Studio Flow
+4) The Twilio Studio Flow interacts with the participant via SMS
+5) Participants respond to the Twilio Studio Flow via SMS and steps 4-5 repeat until completion
+6) Once the engagement is complete, Twilio calls an Azure Function HTTP Trigger for recording information gathered from participants
+7) The Azure Function logic records information gathered by Twilio in the SQL Database for later use
+
+All phases of execution in Azure Function are logged to help with identifying execution problems via Azure Application Insights. Twilio likewise provided logs that helped with identifying key issues in SMS engagements. These steps are visually depicted in the flow diagram shown in Figure 1.  For more information on the platform, please reach out to author Diana Iftimie through email.
+
+![Texting Platform Flow Diagram](TextingPlatform.png)
+
+### Phone Number Confirmation
+
+Following the closure of the enrollment survey we sent a text message at approximately 11AM in each participant's timezone using our main text messaging platform, Twilio, to each of the provided phone numbers. In this text, we informed participants of the study and requested confirmation of their participation by return SMS of the letter 'C'. Only participants who confirmed their telephone number in this way in a timely manner (by 8PM the same day) were included in the study. This enabled us to filter participants to our core compliers for the experiment. We defined "compliers" as those who confirmed they could respond to text messages via our texting platform in a timely manner, and provided at least one outcome measure during the baseline phase of the study. A copy of the SMS texting flow for phone confirmation can be found in Appendix G.
+
+\newpage
+
+### SMS Daily Survey  
+
+To record outcome measures, a 4 question text message survey was sent during the evening of each day of the study, at approximately 8 PM in each participant's time zone. This was known as the *"evening meal inquiry"*. This daily survey asked for the following measures (corresponding variable names in brackets):   
+
+  1) the number of eating occasions that day (`TotalNumEO`)
+  2) the number of eating occasions that the participant prepared themselves (`NumPreparedEO`)
+  3) the number of eating occasions at which land-based meat was eaten (`NumMeatEO`)
+  4) the number of eating occasions at which fruit or vegetables were eaten (`NumFruitVegEO`)  
+  
+Questions 1 and 3 are used to construct the outcome measure of interest for this study. Questions 2 and 4 were included so that participants in the control group would not be aware that the focus of the study was on meat consumption. Asking questions only about meat may have resulted in participants being more conscientious of meat eating habits in general (a form of priming). This survey was used both for the collection of baseline outcome measures (3 days) and for the collection of experimental outcome measures (7 days). A copy of the SMS texting flow for the evening meal inquiry can be found in Appendix G.
+
+### SMS Treatment Messages
+
+Treatment messages were sent to participants in the treatment group from days 4 - 10 of the study after randomly assigning participants to treatment and control. These messages contained concise facts about the impact of meat consumption on the environment as well as recipe suggestions for meatless meals (in the form of links to blog posts and YouTube videos). These messages were sent around 11AM in the participants' time zone. Participants were asked to confirm they received the treatment by replying to the SMS with 'C'. A copy of the SMS texting flow for the treatment administration, as well as all treatments used in the study, can be found in the Appendix G.
+
+### Post-survey
+
+After the SMS experiment data collection was complete, participants were asked to complete a post-survey and were informed of this post-survey via SMS; the survey was sent to participants via an email address provided in the enrollment study. This post-survey gave participants a forum to provide feedback about the administration of the experiment. The survey also asked participants about their engagement with other participants in the experiment. We used this as a rough means to estimate the possible impact of spillovers on our sample (see Section 4.7 for details). We encouraged participants to respond to the final post-survey with the incentive of having a chance to win one of four $25 Amazon gift cards.
+
+### Pilot Study
+
+To mitigate the risk of possible complications when working with our text messaging platform, we decided that a pilot study was required. We directly recruited 9 participants in a convenience sample of close friends and family, and had them fill out an enrollment survey similar to that used in the full study (copy of the Pilot Enrollment Survey in Appendix I).
+
+We confirmed telephone numbers given in the survey through our texting platform around 11AM in the participants' time zones, as defined by the enrollment survey. That same evening, around 8PM in the participants' timezone, we sent a single evening meal inquiry to each participant for a single day of baseline measurement. The baseline measurement allowed us to test the end of day survey collection of outcome measures for the baseline phase of the study.   
+
+The baseline survey gave us a single measurement of the amount of meat eaten, which was used in blocking the participants of the pilot for treatment. This allowed us to test the blocking process. To block the participants, we used the blockTools package (Moore, 2012; Moore & Moore, 2013; Moore & Schnakenberg, 2016) with 3 treatment levels: Control, Facts and Facts+Recipe and 3 variables collected from the enrollment survey and baseline data. The three blocking variables were: 
+
+ * **proportion of eating occasions at which meat was eaten during the baseline day** (4 categorical variables: 1 for 0-25% meat, 2 for 26-50 %meat, 3 for 51-75% meat and 4 for 76-100% meat)
+ * **allergy status** from the enrollment survey (0 for no food allergies, 1 for any food allergy)
+ * **meal planner status** from the enrollment survey (1 if 'meal planner' was Not Relevant to the participant, 2 for Shared responsibility for meal planning and 3 for participant is Main meal Planner for the household)
+
+Note that these categories are expanded in the full study and will be detailed below.
+
+The day following the baseline survey, the experimental phase began and ran for 2 days. Treatments for the treatment group were administered at approximately 11AM in the participants' time zone, and an end of day survey was sent to every participant in treatment and control at 8PM in accordance with time zones. There were a few problems with the texting platform that were ironed out over the course of the pilot, and we followed up with a post-pilot survey to ask for feedback and suggestions (see Appendix J).
+
+Following the pilot study, we made the decision, based on power, to reduce our possible treatments from 2 (Facts only OR Facts+Recipe) to 1 (Facts+Recipe). We also decided to include ketogenic and vegetarian people in the study, by using their diet status as a blocking variable.
+
+## Power Calculation 
+
+```{r include=FALSE}
+# Guesstimate at our power with ONE treatment effect
+
+# treatment effect from pilot study, for both recipe and reminder grouped together
+mut <- 0.153  
+muc <- 0 # control effect
+# std dev of treatment effect from pilot study, for both recipe and reminder grouped together
+sigma <- 0.283  
+N <- 81  # actual number of people in study
+alpha <- 0.05 # 95% confidence level
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+
+q <- normed - cdf_inv 
+
+power <- pnorm(q)
+
+#Find N for desired power of 80%
+q1 <- qnorm(0.8)
+N1 <- ((q1 + cdf_inv)*(2*sigma)/(mut-muc))^2
+```
+
+
+The original proposal and pilot study had two treatments, consisting of treatment messages with facts-only or with facts and recipes. However, in hopes of increasing our potential power, we chose to limit the experimental study to a single treatment consisting of reminder messages with facts and recipes. Following the pilot study, but prior to running the main study, we evaluated the possible power from our experiment. For this calculation, we use the experimental results of the pilot study, as the results from the pilot seemed plausible, given the nature of the study.
+
+From the pilot study, we computed the fraction of meat consumption as the number of meat eating occasions divided by the total number of eating occasions per day - call this the 'MeatFrac'. The difference in the MeatFrac from baseline phase to experimental phase changed in the treatment group by `r mut` (for example, the pilot treatment group ate `r mut*100`% more meat than during baseline), with a standard deviation of `r sigma` (not statistically significant). The control group had approximately 0 difference in mean over baseline. 
+
+Assuming we managed to get `r N` people for the study, the calculated power would only be `r round(power*100,0)`%. We computed that the minimum number of participants required to get a power of 80% (assuming a treatment effect similar in size to the seen in the pilot) at a 95% confidence level, with only one treatment was `r round(N1,0)`. Unfortunately, we did not manage to recruit such a number of complying participants, so we expect our power to be low.
+
+## Blocking, Randomization & CONSORT
+
+Participants were recruited into the study with a link to an enrollment survey in Google Forms which we sent out via a combination of social media posts and emails. This means that the participants self-selected into the study, potentially limiting generalizability of any finding. 95 participants returned the survey and gave permission for us to send SMS messages to their phones. Following the results of the study, the phone numbers and names were extracted from the surveys and each possible participant was sent a confirmation text, to which they needed to reply in order to become part of the treatment portion of the study.  
+
+We defined 'compliers' as participants who provided a phone number, confirmed  their phone numbers in the time allotted (9 hours) and who provided at least one baseline outcome measure. 81 people who replied met those criteria and became our final participants. Sample size was determined solely on the basis of the maximum number of people who completed the enrollment survey during the 3 day period we had it open for input.
+
+To randomize, enrollment survey data and baseline data (3 days) were obtained as .csv files and read into R. The baseline data for the fraction of meals at which meat was eaten were averaged over the 3 days to give each participant a baseline fraction of meat consumption, `MeanFracMeat_Baseline`. The blocking variables were recast as integers to represent categories. We increased the number of blocking variables for the full study over the number used in the pilot to maximize possible precision.   
+
+Blocking categories used were:
+
+- `MeanFracMeat_Baseline` - 1 for 0-25% meat, 2 for 26-50 %meat, 3 for 51-75% meat and 4 for 76-100% meat
+- `allergybinary` - 1 for any food allergy, 0 for none
+- `mealplan` - 0 for 'does not plan meals for household', 1 for 'Not Relevant to me', 2 for 'Shared responsibility for meal planning' and 3 for 'Main Meal Planner in Household'
+- `keto` - 1 for ketogenic diet, 0 for all others
+- `vegetarian` - 1 for vegetarians, vegans and pescatarians, 0 for all others
+- `endtime` - 1 if done eating for the day by 7 PM, 2 for done by 8 PM, 3 for done by 9 PM, 4 for done by 10 PM or later  
+
+These variables were chosen for blocking because we felt that they were the variables that would have the most impact on a participant's choice of food for meals and snacks. Thus, these variables would tend to define similarities and differences in eating behaviours amongst participants in the most precise way, allowing the blocks that were formed to contain the most similar 'eater types'.  
+
+Each participant was uniquely identified using their provided phone number, to which an ID was associated. The `blockTools` (ibid) package was run in R (see Appendix K for full workbook), and blocks were constructed based on the two treatment levels - Treatment (Facts+Recipe) and Control - while maximizing the similarities within a block of participants given the individual values of the 6 blocking variables. The blocking procedure was followed by randomization within each block to assign participants to treatment or control. Randomization was carried out using the `blockTools` package command `assignment` and a seed of 42.  
+
+The resulting design was a matched-pair design with 41 participants in control and 40 in treatment for a total of 41 blocks (81 total participants). The resulting randomized assignments were merged with their IDs and saved as a CSV file for use in the assignment of treatment and control in the texting platform. Note that in the end there was a single participant who qualified as participant, but then gave us no outcome measures at all during the experimental phase, leaving us with 40 in treatment and 40 in control for our final analysis. Following the CONSORT methodology (Schulz, Altman, & Moher, 2010), a flowchart of participant numbers is shown in Figure 2.
+
+All three experimenters posted enrollment survey links on social media, but none were directly responsible for recruitment of participants, as participants self-selected by voluntarily completing the enrollment survey. The experimenter who obtained survey results, performed randomization and assigned treatment group was different from the experimenter who administered the treatment, but no outside party was involved. 
+
+![CONSORT Flowchart Tracking Participant Numbers through Experiment](CONSORT_FlowChart.jpg)
+
+## Notes on Study Execution
+
+Timing of the study was important, as many participants live in the United States, and the study was conducted in November. We planned the start of the study such that it would finish prior to the week of American Thanksgiving, when people's eating habits are often different than normal, and when they may be less likely to participate in the daily survey.
+
+Additionally, the texting platform experienced a variety of minor issues related to administering treatment and collecting outcome measures. This was in part due to the usage of toll-free numbers (which sometimes led to delays in receiving text messages due to carrier maintenance), as well as short outages that seemed to have affected random subsets of participants. When participants sent texts to correct any mistakes they had made in recording outcome measures, we manually updated the outcome measures accordingly (note this would need to be automated for a larger study).
+
+It should be noted that we did not consider the extent to which treatment was actually delivered and taken up as planned. We assumed that everyone who was sent a treatment SMS received and read it. We *did* ask for confirmation of those messages, but did not always receive them. An extension of this study, that would be possible given more time, would involve analyzing the treatment confirmations from participants and any time or treatment effects of the confirmations.
+
+## Timeline 
+
+A timeline of the phases of the pilot and main studies is shown in Table 1. All phases were completed in November 2019.  
+
+| Phase                           | Start Date | End Date | Total Days |
+|---------------------------------|:----------:|:--------:|:----------:|  
+| Pilot Enrollment                |    2 Nov   |   4 Nov  |      2     |  
+| Pilot Phone Number Confirmation |    8 Nov   |   8 Nov  |      1     |  
+| Pilot Baseline                  |    8 Nov   |   8 Nov  |      1     |  
+| Pilot Randomization             |    9 Nov   |   9 Nov  |      1     |   
+| Pilot Treatment                 |    9 Nov   |  10 Nov  |      2     |  
+| Pilot Post Survey               |   11 Nov   |  12 Nov  |      2     |  
+| Main Study Enrollment           |   10 Nov   |  13 Nov  |      4     |  
+| Main Study Baseline             |   14 Nov   |  16 Nov  |      3     |  
+| Main Study Randomization        |   17 Nov   |  17 Nov  |      1     |  
+| Main Study Treatment            |   17 Nov   |  23 Nov  |      7     |  
+| Main Study Post Survey          |   24 Nov   |  27 Nov  |      3     |  
+| Draw for Amazon Gift Cards      |   27 Nov   |  27 Nov  |      1     |  
+
+Table: Timeline for Pilot Study and Main Study  
+
+\newpage
+
+# Analysis
+
+For the analysis of the results of this study, we followed a difference-in-differences design. The first difference is for each participant - the difference between outcome during treatment and outcome in baseline. The next difference is the treatment effect which is the difference between the treatment and control groups. We designed the study to run for 7 days of experimentation following the 3 day baseline. This time series data allows us to approach the analysis using both aggregated and panel data methods. Panel data will involve clustering on a participant basis and will include block fixed effects. The blocks are a matched pair design.
+
+## Import Data, Check and Clean  
+
+The data collected over the course of the study was exported from the SQL database used in the texting platform, where it was captured to a CSV file. This CSV file was subsequently imported into R. `data.table` was used to manipulate the data for efficiency. Any measures that were not recorded during the execution of the study were recorded in SQL as `-1` for the measured outcomes (`TotalNumEO`, `NumPreparedEO`, `NumMeatEO` and `NumFruitVegEO`), which we subsequently replaced in R with `NA` for analysis. Similarly any outcome measure that was not received (indicated with `MeasureReceived = 0` in SQL) was replaced in R with `NA` for analysis. Full code for all data manipulations can be found in Appendix F.
+
+```{r read_data, include=FALSE}
+raw <- fread('./Data/!FinalStudyData.csv')
+```
+
+```{r create_dt, include=FALSE}
+# Creating a working datatable, so we don't mess with the rawdata
+dt <- data.table(raw)
+
+# Replace negative values for outcome measures with NA (values not recorded)
+dt[TotalNumEO == -1]$TotalNumEO = NA
+dt[NumPreparedEO == -1]$NumPreparedEO = NA
+dt[NumMeatEO == -1]$NumMeatEO = NA
+dt[NumFruitVegEO == -1]$NumFruitVegEO = NA
+
+# Zero-out partial outcome measures so we only look at complete outcome measures
+dt[MeasureReceived == 0]$TotalNumEO = NA
+dt[MeasureReceived == 0]$NumPreparedEO = NA
+dt[MeasureReceived == 0]$NumMeatEO = NA
+dt[MeasureReceived == 0]$NumFruitVegEO = NA
+```
+
+
+## Basic Data Transformations
+
+Transformations and calculations carried out on the basic data were: 
+
+1. Calculate fractions `FracMeat` and `FracFruitVeg` for each day (as defined by `MeasureNum`, the day in the study)
+2. Set a binary variable For Treatment (0) and Control (1) conditions (create `Treat`)
+3. Set a shorter participant number (create `ID`)
+4. Baseline Measures were aggregated across the 3 days of baseline and stored in new variables as `MeanMeatEO_Baseline`, `MeanFruitVegEO_Baseline`, `MeanEO_Baseline`, `MeanMeasureReceived_Baseline`, `MeanFracMeat_Baseline` and `MeanFracFruitVeg_Baseline`. 
+5. Meat eaten (as fraction of total eating occasions) was binned
+6. Blocking variables were assigned integers for each category. 
+7. Null values set to `NA`
+8. All column types were checked and set appropriately as numbers or factors if required
+9. Data set was subset to show only the 7 days of treatment, as baseline measures had already been aggregated and included as separate variables
+
+To analyse each participant in aggregate, the full data set was then subset by aggregating the results for each participant across the 7 days of the experiment.   
+
+```{r binaries, include=FALSE}
+# Binary For Treatment/Control
+dt[TreatmentLevel=='Control', Treat := 0]
+dt[TreatmentLevel=='Recipe', Treat := 1]
+
+# Shorter Participant Number
+dt[,ID:=.GRP,by='ParticipantId']
+
+# Fractions of Meat and Veg for each MeasureNum
+dt[,FracMeat := (NumMeatEO/TotalNumEO)]
+dt[,FracFruitVeg := (NumFruitVegEO/TotalNumEO)]
+
+## Aggregate Baseline measures
+
+# Proportion of meat and fruit/veg from baseline
+dt_baseline = data.table(
+  dt[MeasureNum <= 3] %>% group_by(ID) %>% summarize(
+    # Compute average ratio from baseline measures
+    MeanFracMeat_Baseline = mean(FracMeat, na.rm=TRUE), 
+    MeanFracFruitVeg_Baseline = mean(FracFruitVeg, na.rm=TRUE), 
+    
+    # Compute average raw counts from baseline measures
+    MeanMeatEO_Baseline = mean(NumMeatEO, na.rm=TRUE),
+    MeanFruitVegEO_Baseline = mean(NumFruitVegEO, na.rm=TRUE),
+    MeanEO_Baseline = mean(TotalNumEO, na.rm=TRUE),
+    MeanMeasureReceived_Baseline = mean(MeasureReceived)
+  ))
+
+# Convert continuous to categorical variable, as done for blocking
+dt_baseline$MeanFracMeat_Baseline_Category = 1 # set default value
+dt_baseline[MeanFracMeat_Baseline > 0.25 & MeanFracMeat_Baseline <= 0.5,
+            MeanFracMeat_Baseline_Category := 2]
+dt_baseline[MeanFracMeat_Baseline > 0.5 & MeanFracMeat_Baseline <= 0.75,
+            MeanFracMeat_Baseline_Category := 3]
+dt_baseline[MeanFracMeat_Baseline > 0.75 & MeanFracMeat_Baseline <= 1.0,
+            MeanFracMeat_Baseline_Category := 4]
+
+# Join the aggregated baseline data back into the main dt
+dt = data.table(inner_join(dt, dt_baseline, by="ID"))
+
+## Prep remaining variables that were blocked on
+
+# Meal Planner responsibility integer variable
+dt[mealplanner=="Shared responsibility for meal planning in my household",mealplan := 2]
+dt[mealplanner=="Not relevant to me",mealplan := 1]
+dt[mealplanner=="Yes, I am the main meal planner",mealplan := 3]
+dt[mealplanner=="No, I do not meal plan for my household",mealplan := 0]
+
+# Allergy
+dt[,allergybinary:=0]
+dt[allergy != 'None', allergybinary := 1]
+
+# Prepare indicators for Ketogenic & Vegetarian/pescatarian 
+# participants (note there are no vegan participants)
+dt[,c('keto','vegetarian'):=0]
+# binarize the Keto folks
+dt[diet=="Ketogenic (Dukan, Atkins, Generalized Keto)",keto :=1] 
+# Binarize non-meat eaters
+dt[eatertype=="Vegetarian" | eatertype == "Pescatarian", vegetarian:=1] 
+
+# Make time person is done eating into an integer variable
+dt[,endtime:=0]
+dt[doneeating=="10 PM or Later",endtime:=4]
+dt[doneeating=="9:00 PM",endtime:=3]
+dt[doneeating=="8:00 PM",endtime:=2]
+dt[doneeating=="7:00 PM",endtime:=1]
+
+# Change Age Range into numerical categories
+dt[agerange=="18-29",agerangecat := 0]
+dt[agerange=="30-39",agerangecat := 1]
+dt[agerange=="40-49",agerangecat := 2]
+dt[agerange=="50-59",agerangecat := 3]
+dt[agerange=="60+",agerangecat := 4]
+
+# Similarly change gender into numerical categories
+dt[gender=="Female",gendercat := 0]
+dt[gender=="Male",gendercat := 1]
+dt[gender=="Non-binary/Other",gendercat := 2]
+
+# Change location into numerical categories
+dt[location=="Urban",locationcat := 0]
+dt[location=="Suburban",locationcat := 1]
+dt[location=="Rural",locationcat := 2]
+```
+
+
+```{r cleanupdata, results='hide', include=FALSE}
+# Since we aggregated the baseline measures, we will remove all entries 
+# related to baseline measures (first 3 measures)
+dt = dt[MeasureNum > 3]
+
+# Set all NULL values to NA
+dt[dt == 'NULL'] = NA
+
+# Convert values to appropriate types as needed
+dt$TimeZone = as.factor(dt$TimeZone)
+dt$Country = as.factor(dt$Country)
+dt$TreatmentLevel = as.factor(dt$TreatmentLevel)
+dt$TreatmentNum = as.numeric(dt$TreatmentNum)
+dt$TreatmentSent = as.numeric(dt$TreatmentSent)
+dt$TreatmentReceived = as.numeric(dt$TreatmentReceived)
+dt$agerange = as.factor(dt$agerange)
+dt$gender = as.factor(dt$gender)
+dt$location = as.factor(dt$location)
+dt$allergy = as.factor(dt$allergy)
+dt$eatertype = as.factor(dt$eatertype)
+dt$diet = as.factor(dt$diet)
+dt$mealplanner = as.factor(dt$mealplanner)
+dt$doneeating = as.factor(dt$doneeating)
+dt$BlockNum = factor(dt$BlockNum, ordered=FALSE)
+```
+
+
+```{r aggregate, results='hide', include='FALSE'}
+# Aggregate experimental outcome measures & treatment administrations
+dt_1_experiment = dt %>% group_by(ID) %>% summarise(
+  # Compute average ratio from experimental measures
+  MeanFracMeat = mean(FracMeat, na.rm=TRUE),
+  MeanFracFruitVeg = mean(FracFruitVeg, na.rm = TRUE),
+
+  # Compute average raw counts from experimental measures
+  MeanMeatEO = mean(NumMeatEO, na.rm=TRUE),
+  MeanFruitVegEO = mean(NumFruitVegEO, na.rm=TRUE), #TODO: remove?
+  MeanEO = mean(TotalNumEO, na.rm=TRUE),
+  MeanMeasureReceived = mean(MeasureReceived),
+  NumMeasureReceived = sum(MeasureReceived),
+  MeanTreatmentReceived = mean(TreatmentReceived, na.rm=TRUE),
+  NumTreatmentReceived = sum(TreatmentReceived),
+)
+
+dt_1_experiment[dt_1_experiment == 'NaN'] = 0 # TODO: Remove?
+
+# Convert participants with no measures recorded to NA's 
+# (currently encoded as 0's for each measure)
+dt_1_experiment[dt_1_experiment$NumMeasureReceived == 0,]$MeanFracMeat = NA
+dt_1_experiment[dt_1_experiment$NumMeasureReceived == 0,]$MeanFracFruitVeg = NA
+dt_1_experiment[dt_1_experiment$NumMeasureReceived == 0,]$MeanMeatEO = NA
+dt_1_experiment[dt_1_experiment$NumMeasureReceived == 0,]$MeanFruitVegEO = NA
+dt_1_experiment[dt_1_experiment$NumMeasureReceived == 0,]$MeanEO = NA
+
+# Get covariates used for blocking
+dt_1_covariates = dt %>% group_by(ID) %>%
+  summarise(
+        MeanFracMeat_Baseline = first(MeanFracMeat_Baseline),
+        MeanFracFruitVeg_Baseline = first(MeanFracFruitVeg_Baseline),
+        Treat = first(Treat),
+        BlockNum = first(BlockNum),
+        mealplan = first(mealplan),
+        allergybinary = first(allergybinary),
+        keto = first(keto),
+        vegetarian = first(vegetarian),
+        endtime = first(endtime),
+        agerangecat=first(agerangecat),
+        gendercat=first(gendercat),
+        locationcat=first(locationcat)
+    )
+
+# Get other baseline measures
+dt_1_baseline = dt %>% group_by(ID) %>%
+  summarise(
+        MeanEO_Baseline = first(MeanEO_Baseline),
+        MeanMeatEO_Baseline = first(MeanMeatEO_Baseline),
+        MeanFruitVegEO_Baseline = first(MeanFruitVegEO_Baseline)
+  )
+
+# Get Other pre-treatment data for analysis
+dt_1_analysis_covars = dt %>% group_by(ID) %>%
+  summarise(
+        climate = first(climate),
+        health = first(health),
+        education = first(education),
+        animalrights = first(animalrights),
+        immigration = first(immigration),
+        politics = first(politics),
+        foreignaffairs = first(foreignaffairs)
+    )
+
+# Join together
+dt_1 = data.table(inner_join(dt_1_experiment, dt_1_covariates, by="ID"))
+dt_1 = data.table(inner_join(dt_1, dt_1_baseline, by="ID"))
+dt_1 = data.table(inner_join(dt_1, dt_1_analysis_covars, by="ID"))
+```
+
+## Exploratory Data Analysis
+
+### Participant Individual Values Aggregate Plot   
+
+As an initial data exploration, Figure 3 shows the distribution of the 7-day means of the two elements of our outcome measures, eating occasions per day and meat eating occasions per day, across control and treatment groups. Points are jittered slightly for visibility. Figure 3 shows that there may be a difference in the eating occasions per day, but not likely one in the meat eating occasions per day when viewed at the aggregated level.
+
+```{r partic_value_plot, fig.cap="Distribution of Mean Meat and Mean Eating Occasions per day by Treatment", fig.width=7,fig.height=3.5, echo=FALSE}
+plotting <- copy(dt_1)
+plotting <- data.table(plotting %>% mutate(Treat=factor(Treat,
+                                                        labels=c("Control","Treatment"))))
+plotting <- na.omit(plotting, cols=c('MeanMeatEO'))
+
+colors = c("gray60", "darkgreen")
+
+g1 <-ggplot(plotting,aes(x=Treat, y=MeanMeatEO))+
+  geom_boxplot(notch = FALSE,aes(colour=Treat),lwd=1.25,show.legend = FALSE)+
+  theme_bw()+scale_color_manual(values=colors)+
+  geom_jitter(height=0.001,width=0.05)+ylab("Mean Meat Eating Occasions per day")+
+  theme(axis.title.x=element_blank())
+
+g2 <-ggplot(plotting,aes(x=Treat, y=MeanEO))+
+  theme_bw()+scale_color_manual(values=colors)+
+  geom_boxplot(notch = FALSE,aes(colour=Treat),lwd=1.25, show.legend = FALSE)+
+  geom_jitter(height=0.001,width=0.05)+
+  ylab("Mean Eating Occasions per day")+
+  theme(axis.title.x=element_blank())
+
+grid.arrange(g2,g1,ncol=2,
+             top="Distribution of Mean Meat and Total Eating Occasions per day by Treatment")
+```
+
+
+### Aggregate and Time Series Plots
+
+Following the aggregate plots showing individual values, further insight can be gained by visualizing the distributions of outcome variables in aggregate as well as over time. In this study we are interested in how and whether eating habits related to meat eating change due to treatment and over time.   
+
+To visualize these effects, Figure 4A shows the outcome measure `NumMeatEO` (as a difference from baseline) by treatment level, in aggregate and across time. Figure 4B shows outcome measure `TotalNumEO` (as a difference from baseline) in similar fashion. Finally, to show meat eating relative to the daily number of eating occasions, Figure 4C shows calculated outcome `FracMeat` (as a difference from baseline) in aggregate and across time.  
+
+```{r time_boxplots, fig.height=4, fig.width=12, warning=FALSE, echo=FALSE, fig.cap='Aggregate and Time Series plots of Outcome Measures',fig.subcap=c('Figure 4A','Figure 4B','Figure 4C'),fig.ncol=1}  
+
+plotBoxplots = function(data, xVarData, xVarName, indexVar, indexVarName, yVarData,
+                        yVarName, legendNames, yLimits) {
+  colors = c("gray60", "darkgreen")
+  
+  p1 = ggplot(data, aes(xVarData, yVarData)) + theme_bw() + xlab(TeX(xVarName)) +
+    geom_boxplot(show.legend=FALSE, (aes(colour=as.factor(xVarData))), lwd=1.25) +
+    ggtitle("Aggregated Results") + 
+    scale_x_discrete(breaks=NULL) + ylab(TeX(yVarName)) + 
+    ylim(yLimits) + xlab("") + scale_color_manual(values=colors)
+  
+  p2 = ggplot(data, aes(as.factor(indexVar), yVarData)) +
+    labs(color=xVarName) +
+    theme_bw() +
+    ggtitle(TeX(paste(yVarName, "by", xVarName))) +
+    xlab(TeX(indexVarName)) +
+    ylab(TeX(yVarName)) + ylim(yLimits) +
+    scale_colour_manual(values=colors, labels=legendNames) +
+    geom_boxplot(aes(colour = as.factor(xVarData)), lwd=1.25)
+
+  g1 = ggplotGrob(p1)
+  g2 = ggplotGrob(p2)
+  g1$heights = g2$heights
+  grid.arrange(g1, g2, widths=c(1, 3), layout_matrix = cbind(1, 3))
+}
+
+plotBoxplots(dt, dt$TreatmentLevel, "TreatmentLevel", 
+             dt$MeasureNum - 3, "Day of Experiment", 
+             dt$NumMeatEO - dt$MeanMeatEO_Baseline,
+             "$\\Delta$NumMeatEO (Experiment - Baseline)", 
+             c("Control", "Treatment"), c(-2, 2))
+
+plotBoxplots(dt, dt$TreatmentLevel, "TreatmentLevel", 
+             dt$MeasureNum - 3, "Day of Experiment", 
+             dt$TotalNumEO - dt$MeanEO_Baseline,
+             "$\\Delta$TotalNumEO (Experiment - Baseline)", 
+             c("Control", "Treatment"), c(-2, 2))
+
+plotBoxplots(dt, dt$TreatmentLevel, "TreatmentLevel", 
+             dt$MeasureNum - 3, "Day of Experiment", 
+             dt$FracMeat - dt$MeanFracMeat_Baseline,
+             "$\\Delta$FracMeat (Experiment - Baseline)", 
+             c("Control", "Treatment"), c(-0.75, 0.75))
+```  
+
+
+Figure 4A, `NumMeatEO`, shows little-to-no change in meat-eating behaviors in both the treatment and control group, across time and in aggregate. This is evident in both the medians of the distributions and the interquartile ranges, as the difference from baseline shown appears to be consistently distributed around $0$. This suggests that treatment appears to have had little-to-no effect on meat eating behaviour amongst participants.  
+
+Figure 4B, `TotalNumEO`, shows that in aggregate and across time, for both treatment and control groups, the median eating occasions as a difference from baseline in general show $0$ change in eating occasions. However, we do see a slight drop in the medians for the treatment group on the 6th and 7th days and, unlike Figure 4A for `NumMeatEO`, we see the distribution of eating occasions for treatment are generally lower than those for control, both in aggregate and across time. This suggests a potential treatment effect that decreases the total number of eating occasions amongst participants.
+
+Figure 4C, `FracMeat`, shows the calculated outcome measure that was originally proposed for the study, the relative measure of meat eaten as a fraction of the total eating occasions in a day. This plot shows that in general, the fraction of meat meals eaten, as a difference from baseline, does not change overall from $0$, nor does it seem to change significantly between treatment and control either in aggregate or over time.
+
+## Covariate Balance
+
+In order to ensure that there is correct randomization between the treatment and control groups, covariate balance must be reviewed. After blocking on the 6 variables that were felt would influence meat eating habits the most (as mentioned previously), the balance of the remaining the covariates must be checked as well.
+
+Table 2 contains a list of all the covariates that will be checked for balance, their source and a brief description. Balance will be assessed using the variable `Treat` to define the two groups for comparison (where `Treat == 0` defines the Control group and `Treat == 1` defines the Treatment group).
+
+\newpage
+
+| Variable                          | Source              | Description                                                       |  
+|-----------------------------------|---------------------|-------------------------------------------------------------------|  
+| `MeanMeatEO_Baseline`             | Baseline Study      | Mean number of meat eating occasions per day in baseline          |  
+| `MeanFruitVegEO_Baseline`         | Baseline Study      | Mean number of fruit and veg eating occasions per day in baseline |  
+| `MeanEO_Baseline`                 | Baseline Study      | Mean number of eating occasions per day in baseline               |  
+| `mealplan`                        | Enroll. Survey      | Meal Planner Status                                               |  
+| `allergybinary`                   | Enroll. Survey      | Food Allergy Indicator                                            |  
+| `keto`                            | Enroll. Survey      | Ketogenic Diet Indicator                                          |  
+| `vegetarian`                      | Enroll. Survey      | Vegetarian, Vegan or Pescatarian Indicator                        |  
+| `endtime`                         | Enroll. Survey      | Categorical for time of day meals are finished (4 times)          |  
+| `agerange`                        | Enroll. Survey      | Categorical for age (5 ranges)                                    |  
+| `gender`                          | Enroll. Survey      | Categorical for gender (M/F/O)                                    |  
+| `location`                        | Enroll. Survey      | Categorical for location (Urban/ Suburban/Rural)                  |  
+| `climate`                         | Enroll. Survey      | Feelings indicator Score for climate issues                       |  
+| `health`                          | Enroll. Survey      | Feelings indicator Score for health and longevity issues          |  
+| `education`                       | Enroll. Survey      | Feelings indicator Score for education issues                     |  
+| `animalrights`                    | Enroll. Survey      | Feelings indicator Score for animal rights issues                 |  
+| `politics`                        | Enroll. Survey      | Feelings indicator Score for political issues                     |  
+| `immigration`                     | Enroll. Survey      | Feelings indicator Score for immigration issues                   |  
+| `foreginaffairs`                  | Enroll. Survey      | Feelings indicator Score for foreign affairs issues               |    
+
+Table: Name, Source and Description of Covariate Variables used in Covariate Balance Check
+
+```{r create_covars, include=FALSE}
+
+# reduce the data to just the pre-treatment columns and 1 line per person
+# We are checking pre-treatment covariates based on the pre-treatment 
+# piece of data we have for each person  
+
+dtcovars <- data.table(dt %>% group_by(ID) %>%
+  summarise(
+        MeanMeatEO_Baseline = first(MeanMeatEO_Baseline),
+        MeanFruitVegEO_Baseline = first(MeanFruitVegEO_Baseline),
+        MeanEO_Baseline=first(MeanEO_Baseline),
+        Treat = first(Treat),
+        BlockNum = first(BlockNum),
+        mealplan = first(mealplan),
+        allergybinary = first(allergybinary),
+        keto = first(keto),
+        vegetarian = first(vegetarian),
+        endtime = first(endtime),
+        agerange=first(agerange),
+        agerangecat=first(agerangecat),
+        gender=first(gender),
+        gendercat=first(gendercat),
+        location=first(location),
+        locationcat=first(locationcat),
+        climate=first(climate),
+        health=first(health),
+        education=first(education),
+        animalrights=first(animalrights),
+        politics=first(politics),
+        immigration=first(immigration),
+        foreignaffairs=first(foreignaffairs)
+    ))
+```
+
+
+```{r covariate_regression, include=FALSE }
+cov_check_all <- lm(Treat ~ MeanMeatEO_Baseline
+                            +allergybinary
+                            +mealplan
+                            +keto
+                            +vegetarian
+                            +endtime
+                            +agerange
+                            +gender
+                            +location
+                            +MeanEO_Baseline
+                            +MeanFruitVegEO_Baseline
+                            +climate
+                            +health
+                            +education
+                            +animalrights
+                            +politics
+                            +immigration
+                            +foreignaffairs, data=dtcovars)   
+
+# Checked the f-score here aganst a model only including the intercept, and luckily R
+# is smart enough that the full regression F-score does not take the intercept into account.
+summary(cov_check_all)
+fscore <- unlist(summary(cov_check_all)['fstatistic'])
+f <-fscore[1]
+pvalue <- pf(fscore[1],fscore[2],fscore[3],lower.tail=F)
+
+stargazer(cov_check_all, title="Covariate Check", type='latex',
+          ci=TRUE, single.row=TRUE,intercept.bottom = FALSE,
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+To check covariate balance, a regression of the `Treat` indicator against all the covariate variables in Table 2 was run, and the F-test showed that we cannot reject the null (F Score = `r round(f,3)`, with p-value of `r round(pvalue,3)`), and thus conclude that there appears to be no influence of covariates on predicting treatment assignment. To further explore we will look at the difference in means of each covariate between Treatment and Control (standard errors used to calculate the confidence interval of the difference of means), as shown in Table 3. Table 3 shows that all but 1 covariate have a difference in means between treatment and control of 0, which allows us to conclude that the treatment and control groups are well balanced on the basis of the covariates collected. A graphical representation of the covariate balance table is shown in Figure 5, where the balance is apparent.
+
+Histograms showing the distribution of all covariates can be found in Appendix D for reference.  
+
+\newpage
+
+
+```{r covariate_table, results="asis", echo=FALSE}
+# Report mean and SE of the mean by variable for each group (treat and Control)
+
+covars <- dtcovars[,.(mean_meat=mean(MeanMeatEO_Baseline),se_meat=sem(MeanMeatEO_Baseline),
+                      mean_allergy=mean(allergybinary),se_allergy=sem(allergybinary),
+                      mean_plan=mean(mealplan),se_plan=sem(mealplan),
+                      mean_keto=mean(keto),se_keto=sem(keto),
+                      mean_veg=mean(vegetarian),se_veg=sem(vegetarian),
+                      mean_time=mean(endtime),se_time=sem(endtime),
+                      mean_age0=mean(agerangecat==0),se_age0=sem(agerangecat==0),
+                      mean_age1=mean(agerangecat==1),se_age1=sem(agerangecat==1),
+                      mean_age2=mean(agerangecat==2),se_age2=sem(agerangecat==2),
+                      mean_age3=mean(agerangecat==3),se_age3=sem(agerangecat==3),
+                      mean_age4=mean(agerangecat==4),se_age4=sem(agerangecat==4),
+                      mean_gender0=mean(gendercat==0),se_gender0=sem(gendercat==0),
+                      mean_gender1=mean(gendercat==1),se_gender1=sem(gendercat==1),
+                      mean_gender2=mean(gendercat==2),se_gender2=sem(gendercat==2),
+                      mean_EO=mean(MeanEO_Baseline),se_EO=sem(MeanEO_Baseline),
+                      mean_fruitveg=mean(MeanFruitVegEO_Baseline),
+                      se_fruitveg=sem(MeanFruitVegEO_Baseline),
+                      mean_location0=mean(locationcat==0),se_location0=sem(locationcat==0),
+                      mean_location1=mean(locationcat==1),se_location1=sem(locationcat==1),
+                      mean_location2=mean(locationcat==2),se_location2=sem(locationcat==2),
+                      mean_climate=mean(climate),se_climate=sem(climate),
+                      mean_health=mean(health),se_health=sem(health),
+                      mean_education=mean(education),se_education=sem(education),
+                      mean_animalrights=mean(animalrights),
+                      se_animalrights=sem(animalrights),
+                      mean_politics=mean(politics),se_politics=sem(politics),
+                      mean_immigration=mean(immigration),
+                      se_immigration=sem(immigration),
+                      mean_foreignaffairs=mean(foreignaffairs),
+                      se_foreignaffairs=sem(foreignaffairs)
+                      ), by=Treat]
+# Make covars a vertical table
+covars <- dcast(melt(covars,id.vars="Treat"),variable ~ Treat)
+setnames(covars,c('0','1'),c('Control','Treat'))
+
+#Add the difference in means and the SE of the difference
+covars[,'RowNo' := .I]
+covars[RowNo%%2==1,'Difference':=(Treat-Control)]
+covars[RowNo%%2==0,'Difference':=(sqrt(Treat^2+Control^2))]
+toplot <- copy(covars)
+
+covars[RowNo%%2==1,'SE_Diff':=covars[RowNo%%2==0,Difference]]
+covars[RowNo%%2==1,':='(LowCI=(Difference-1.96*SE_Diff),UpCI=(Difference+1.96*SE_Diff))]
+covars <- covars[RowNo%%2==1,]
+covars[,RowNo:=NULL]
+# Formatting including switch to dataframe
+cv <- covars
+
+rownms <-c("Baseline Meat EO","Allergy","Meal Planner","Keto","Vegetarian",
+           "Time Finished Eating","Age 18-29","Age 30-39","Age 40-49",
+           "Age 50-59","Age 60+","Female","Male","Nonbinary/Other",
+           "Baseline Eating Occasions","Baseline FruitVeg EO","Urban",
+           "Suburban","Rural","Climate","Health","Education",
+           "Animal Rights","Politics","Immigration","Foreign Affairs")
+cv[,"Variables":=rownms][,'variable':=NULL][,'SE_Diff':=NULL] #Change Row names
+#Change column Order
+setcolorder(cv,c("Variables","Control","Treat","Difference","LowCI","UpCI")) 
+
+cv<-data.frame(cv) #Change to Data Frame
+cv[,-1] <- round(cv[,-1],3) #Round all values for display
+cv$CI <- paste("(",cv$LowCI,",",cv$UpCI,")")   # Create confidence interval column
+cv <- cv[c('Variables','Control','Treat','Difference','CI')] # Drop unneeded columns
+
+#Use kable to print pretty
+kable(cv, caption='Covariate Balance Check', booktabs=T)
+```
+
+```{r covbal_figure, warning=FALSE, fig.width=7,fig.height=8, echo=FALSE, fig.cap='Covariate Balance (Treatment-Control) Confidence Intervals'}
+# My version of the caterpillar
+# put ses into their own column
+toplot[RowNo%%2==1,'Mean':=Difference]
+toplot[RowNo%%2==0,'StdError' := Difference]
+toplotmeans <- toplot[,c('Mean','RowNo')]
+toplotmeans <- toplotmeans[RowNo%%2==1]
+rownms2 <-c("Baseline Meat EO","Allergy","Meal Planner","Keto","Vegetarian",
+            "Time Finished Eating",
+            "Age 18-29","Age 30-39","Age 40-49","Age 50-59","Age 60+","Female","Male",
+           "Nonbinary/Other","Baseline Eating Occasions","Baseline FruitVeg EO","Urban",
+           "Suburban","Rural","Climate","Health",
+           "Education","Animal Rights","Politics","Immigration","Foreign Affairs")
+toplotmeans[,"Variables":=rownms2]
+setcolorder(toplotmeans,c("Variables","Mean","RowNo"))
+toplotmeans[,'RowNo' := .I]
+toplotses <- toplot[,c('StdError','RowNo')][RowNo%%2==0][,'RowNo' := .I]
+toplotmeans <- toplotmeans[toplotses,on='RowNo']
+toplotmeans[,'RowNo':=NULL]
+toplotmeans[,':='(LHS=Mean-1.96*StdError,RHS=Mean+1.96*StdError)]
+
+par(lwd = 2,
+    cex.main = 1,
+    cex.lab = 1,
+    cex.axis = 0.8,
+    col.axis = "gray25",
+    mai=c(1,1.5,1,0),
+    oma=c(0.25,2,0.25,0.25),
+    bty = "n"
+    )
+plot(x=0, xlim = c(-1.0, 1.0), ylim = c(0, toplotmeans[ , .N]), type = 'n',
+     xlab = 'Confidence Interval',yaxt='n',ylab=NA)
+arrows(x0 = toplotmeans[,LHS], x1 = toplotmeans[,RHS],
+       y0 = 1:toplotmeans[,.N], y1 = 1:toplotmeans[,.N],
+       angle = 90, code = 3, length = .1)
+abline(v = 0, col = 'red', lty = 2)
+axis(side=2,at=1:toplotmeans[,.N] , labels=toplotmeans[,Variables],
+     pos=-1.0,las=2,tck=0,col='NA')
+title(main='Covariate Balance \n (Treatment-Control) Confidence Interval')
+```
+
+
+\newpage
+
+
+## Modeling
+
+In the following models, covariate effects are limited to baseline eating habits and block effects (fixed and random). The remaining covariates were assessed and models including them did not show anything of interest and thus are not included in this discussion. Comprehensive blocking before beginning the experiment is likely the cause for this.  Note that in the following discussion, 'eating occasions' (or 'EO') is the same as all meals and snacks consumed in a day.
+
+### Meat Eaten as a Fraction of Daily Eating Occasions (in Aggregate).
+
+In the initial design of the experiment, we were interested in evaluating our core hypothesis: whether treatment affects meat consumption. The fractional amount of meat eaten per day, `FracMeat` (number of meat eating occasions divided by the total number of eating occasions for a single participant in a single day), was originally proposed. The original reasoning was that the number of eating occasions reported by participants might vary and thus normalizing meat by total eating occasions was proposed. As a result, this first model concentrates on modeling `FracMeat` by aggregating all fractional responses for each participant across 7 days to get `MeanFracMeat`. (Regression tables in this report are formatted using the stargazer package (Hlavac, 2018)).
+
+
+```{r model1, warning=FALSE, echo=TRUE}
+# Model aggregated fractions of meat (nested models)
+
+model_meanfracmeat.1 = lm(
+  MeanFracMeat ~ Treat, data=dt_1)  
+
+model_meanfracmeat.2 = lm(
+  MeanFracMeat ~ Treat + MeanFracMeat_Baseline, data=dt_1)
+
+# Full model
+model_meanfracmeat = lm(
+  MeanFracMeat ~ Treat + MeanFracMeat_Baseline + BlockNum, data=dt_1) 
+```
+
+```{r model1_table, warning=FALSE,echo=FALSE, results='asis',message=FALSE}
+# Compute robust standard errors
+robust_se = function(model) {
+  return(lmtest::coeftest(model, sandwich::vcovHC(model, type="HC1"))[,"Std. Error"])
+}
+model_meanfracmeat.1$se = robust_se(model_meanfracmeat.1)
+model_meanfracmeat.2$se = robust_se(model_meanfracmeat.2)
+model_meanfracmeat$se = robust_se(model_meanfracmeat)
+
+c1 <- coefficients(model_meanfracmeat)[2]
+se1 <- summary(model_meanfracmeat)$coefficients[2,2]
+
+# Show results in stargazer
+stargazer(model_meanfracmeat.1, model_meanfracmeat.2, model_meanfracmeat, 
+          se = list(model_meanfracmeat.1$se, model_meanfracmeat.2$se, model_meanfracmeat$se),
+          title="Modeling Aggregated Meat Consumed as Fraction of 
+          Total Eating Occasions (EO)", type='latex', omit="BlockNum",
+          add.lines=list(c("BlockNum Fixed Effects", "FALSE", "FALSE", "TRUE"), 
+                         c("--------------------------------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE, single.row=FALSE, header=FALSE,
+          omit.stat = c("rsq", "adj.rsq", "ser", "f"), star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+Table 4 shows the initial model of the effects that treatment, `Treat`, may or may not have had on the aggregated fraction of meat consumed by our participants, `MeanFracMeat`. The related baseline measure `MeanFracMeat_Baseline` and the block numbers in `BlockNum` (as a factor) are included in order to see how each of these covariates affect the model. By including the baseline measure, we can control for the effects that participants' general eating behavior may have on the responses. Likewise, by including the block numbers as a factor, we will effectively capture covariates that were blocked on at the start of the experiment, which we believed to be indicative of eating behaviours amongst participants. As these are aggregated results, robust standard errors are used for our estimates.
+
+Comparing the three models in Table 4, it is clear that the `MeanFracMeat_Baseline` is very good at explaining the variance seen in the outcome `MeanFracMeat`, both with and without the addition of the `BlockNum` fixed effects. Interestingly, in this model of the calculated outcome, `MeanFracMeat`, the coefficient estimated on `Treat`, while statistically insignificant, is consistently positive even as covariates are added to the model. This suggests that the administration of treatment led to a small average increase in meat-eating behavior, of ~ `r round(c1,3)`(`r round(se1,3)`) more fractions of a meal where meat was eaten. That is, the treatment group appears to have increased the fraction of meat consumed by approximately `r round(c1*100,1)` percentage points compared to the control group. 
+
+More explicitly, for example, if a participant had 0.5, or half, of their daily meals containing meat, then in treatment, they had 0.5+0.035 = 0.535 daily meals containing meat. This is consistent with the aggregated results we observed in the distribution of both the treatment and control groups for the fraction of meat consumption during our EDA.
+
+With this regression result, we may be tempted to conclude that the treatment administered in this experiment may have had a positive effect on meat eating behavior, directly opposite to what we had intended. However, this model depends strongly on the assumption that the treatment had no effect on any other outcome besides meat-eating behavior (exclusion restriction). In other words, we have assumed that the total number of eating occasions recorded by participants does not change with the administration of treatment from the baseline to the experimental phase. In order to evaluate whether the exclusion restriction holds and whether this model is valid, the effects of treatment on the raw values of meat eaten per day and total number of eating occasions per day are addressed in the following section.
+
+
+### Total & Meat Eating Occassions Per Day (in Aggregate)
+
+To properly evaluate whether or not the exclusion restriction holds for our experiment, we must evaluate if treatment, `Treat`, had any effect on the number of eating occasions aggregated by participant over the course of the 7 days, `MeanEO`. Similarly to the previous model, the dependent variable is `Treat` and the additional covariates of the baseline measure, `MeanEO_Baseline`, and the block numbers, `BlockNum`, are included. Robust standard errors are used for these aggregated measures.
+
+\newpage
+
+```{r model2, warning=FALSE, echo=TRUE}
+# Model aggregated number of eating occasions (nested models)  
+
+model_meaneo.1 = lm(
+  MeanEO ~ Treat, data=dt_1)  
+
+model_meaneo.2 = lm(
+  MeanEO ~ Treat + MeanEO_Baseline, data=dt_1) 
+
+# Full model
+model_meaneo = lm(
+  MeanEO ~ Treat + MeanEO_Baseline + BlockNum, data=dt_1) 
+```
+
+```{r model2_table, warning=FALSE, results='asis',message=FALSE, echo=FALSE}
+# Compute robust standard errors
+model_meaneo.1$se = robust_se(model_meaneo.1)
+model_meaneo.2$se = robust_se(model_meaneo.2)
+model_meaneo$se = robust_se(model_meaneo)
+
+c2 <- coefficients(model_meaneo)[2]
+se2 <- summary(model_meaneo)$coefficients[2,2]
+
+# Show results in stargazer
+stargazer(model_meaneo.1, model_meaneo.2, model_meaneo, 
+          se = list(model_meaneo.1$se, model_meaneo.2$se, model_meaneo$se),
+          title="Modeling Aggregated Counts of Total Eating Occasions (EO)",
+          type='latex', omit="BlockNum",
+          add.lines=list(c("BlockNum Fixed Effects", "FALSE", "FALSE", "TRUE"),
+                         c("--------------------------------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE, single.row=FALSE, header=FALSE,
+          omit.stat = c("rsq", "adj.rsq", "ser", "f"), star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+Table 5 shows that treatment appears to have a negative effect on the aggregated total number of eating occasions across 7 days with `r round(c2,3)`(`r round(se2,3)`) fewer meals than in the baseline measure. This is consistent with the observations made during our EDA as well on the aggregated results of `TotalNumEO`. Although statistically insignificant, this indicates a likely violation of the exclusion restriction that would allow us to use the fraction of meals containing meat from the previous section.  
+
+With the decrease in mean eating occasions from Table 5, and the increase in fraction of meals containing meat from Table 4, we need to ensure we review the treatment effect on the raw values for meat eating occasions, `MeanMeatEO` as shown in Table 6.  
+
+\newpage
+
+```{r model3,warning=FALSE, echo=TRUE}
+# Model aggregated number of meat eating occasions (nested models)
+ 
+model_meanmeateo.1 = lm(
+  MeanMeatEO ~ Treat, data=dt_1)
+
+model_meanmeateo.2 = lm(
+  MeanMeatEO ~ Treat + MeanMeatEO_Baseline, data=dt_1)
+
+# Full model
+model_meanmeateo = lm(
+  MeanMeatEO ~ Treat + MeanMeatEO_Baseline + BlockNum, data=dt_1) 
+``` 
+
+```{r model3_table, warning=FALSE, results='asis',message=FALSE,echo=FALSE}
+# Compute robust standard errors
+model_meanmeateo.1$se = robust_se(model_meanmeateo.1)
+model_meanmeateo.2$se = robust_se(model_meanmeateo.2)
+model_meanmeateo$se = robust_se(model_meanmeateo)
+
+c3 <- coefficients(model_meanmeateo)[2]
+se3 <- summary(model_meanmeateo)$coefficients[2,2]
+
+# Show results in stargazer
+stargazer(model_meanmeateo.1, model_meanmeateo.2, model_meanmeateo, 
+          se = list(model_meanmeateo.1$se, model_meanmeateo.2$se, model_meanmeateo$se),
+          title="Modeling Aggregated Number of Meat Eating Occasions (EO)",
+          type='latex', omit="BlockNum",
+          add.lines=list(c("BlockNum Fixed Effects", "FALSE", "FALSE", "TRUE"), 
+                         c("--------------------------------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE, single.row=FALSE, header=FALSE,
+          omit.stat = c("rsq", "adj.rsq", "ser", "f"), star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+Table 6 consistently shows a treatment effect of approximately zero - the point estimate for the effect when we include all covariates of interest is `r round(c3,3)`(`r round(se3,3)`). This means that in aggregate across the 7 days, while the treatment may have had an effect on the total number of eating occasions per day, it seems at first glance to have had approximately no effect on meat eating behavior. This is also consistent with the observations made in our EDA.
+
+These aggregated results do not, however, tell the full story, as we have collected data for this experiment for each of the 7 days. To truly understand the effect that the treatment may have had on our participants' eating behaviour, we turn to studying more complex models that will capture the dimension of time. Due to the results seen in the models for `MeanEO`, and the violation of the exclusion restriction, we will continue to look at and model for the two outcomes (meat and total eating occasions) separately and not as a fraction of meat consumption (which was seen in Table 4).   
+
+
+### Total & Meat Eating Occasions Across Time (Panel Data Approach)
+
+Dependent on how the results of the first three aggregate models are viewed, at a high level it appears that treatment had an effect on participants. By looking at the ratio of meat eating occasions to total eating occasions, we saw a slightly positive effect, but when looking at the number of meat and total number of eating occasions separately, we saw a negative effect of treatment on the total eating occasions and approximately $0$ effect for meat eating. Although we did not observe any statistical significance in the effect of treatment for the aggregated models discussed previously, it appears that we may not have had the desired effect as stated in our hypothesis. 
+
+To be complete with our modeling, we need to use the data collected for this experiment as a panel data set. This study's panel data set has multiple observations collected for each participant over the course of 7 days (one for each day) - the data spans time and participants. The first 3 models (Tables 4, 5 and 6), only dealt with aggregate measures, but with this panel data set, we have the potential to capture more interesting effects that may be happening across time. 
+
+We will start by studying general eating behavior across time and model `TotalNumEO`. The covariates for baseline eating behaviour, `MeanEO_Baseline`, and for block effects, `BlockNum`, will be included in the nested models, similar to the aggregate models discussed previously.
+
+To capture time effects, a variable representing time must be chosen. The panel data models use the variable `Day`, which is defined as the number of the days in the experimental phase. `Day` is computed from `MeasureNum`. `Day` is cast as a factor, which allows estimation of effects that are specific to a particular day during which the experiment was running, as opposed to the effect of a single day's worth of participation in the study.
+
+There is a potential that the time effects may vary depending on whether participants are assigned to treatment or control. To capture this effect, interaction between `Treat` and `Day` will be added to the nested models. With the interaction effect `Treat*Day` we may be able to determine if there are time effects specific to each treatment group.
+
+Finally, in addition to adding the time dimension to the models for our panel data set, we were also interested in studying whether using fixed effects on `BlockNum` covariates (as shown in Tables 4,5 and 6) or using random effects on `BlockNum` would be better suited for the modeling of this panel data. Within our `BlockNum` variable, we effectively capture a random sample of the possible levels of our blocking covariates which makes the `BlockNum` variable well-suited for modeling with random effects (Smith, 2012; Faraway, 2016).  
+
+\newpage
+
+```{r model4prep, warning=FALSE,echo=FALSE}
+# Turn BlockNum into factor to help Mixed Effects model
+dt$BlockNum = factor(dt$BlockNum, ordered=FALSE)
+dt$Day = factor(dt$MeasureNum - 3, ordered=FALSE)
+```
+
+
+```{r model4, warning=FALSE,echo=TRUE}
+# Model number of eating occasions (nestedmodels)  
+
+# Fixed effects BlockNum
+model_totalnumeo.p.o.f = lm(
+  TotalNumEO ~ Treat + MeanEO_Baseline + BlockNum, data=dt)   
+
+# Fixed effects BlockNum and Day
+model_totalnumeo.p.d.f = lm(
+  TotalNumEO ~ Treat + MeanEO_Baseline + Day + BlockNum, data=dt) 
+
+# Fixed effects BlockNum & Interaction
+model_totalnumeo.p.d.f.i = lm(
+  TotalNumEO ~ Treat + MeanEO_Baseline + Day*Treat + BlockNum, data=dt) 
+
+# Random effects BlockNum and Day
+model_totalnumeo.p.d.r = lmer(
+  TotalNumEO ~ Treat + MeanEO_Baseline + Day + (1|BlockNum), data=dt) 
+
+# Random effects BockNum & Interaction
+model_totalnumeo.p.d.r.i = lmer(
+  TotalNumEO ~ Treat + MeanEO_Baseline + Day*Treat + (1|BlockNum), data=dt) 
+```
+
+
+```{r model4_table,warning=FALSE,results='asis',message=FALSE,echo=FALSE}
+# Compute clustered standard errors
+clustered_se = function(model, cluster_vec) {
+  return (lmtest::coeftest(model,
+                           sandwich::vcovCL(model,
+                                            cluster = cluster_vec))[, "Std. Error"])
+}
+model_totalnumeo.p.o.f$se = clustered_se(model_totalnumeo.p.o.f, dt$ID)
+model_totalnumeo.p.d.f$se = clustered_se(model_totalnumeo.p.d.f, dt$ID)
+model_totalnumeo.p.d.f.i$se = clustered_se(model_totalnumeo.p.d.f.i, dt$ID)
+# Mixed Effects Models doesn't require clustering std. errors 
+
+# Show results in stargazer
+stargazer(model_totalnumeo.p.o.f, model_totalnumeo.p.d.f, model_totalnumeo.p.d.r, 
+          model_totalnumeo.p.d.f.i, model_totalnumeo.p.d.r.i,
+          se = list(model_totalnumeo.p.o.f$se, model_totalnumeo.p.d.f$se, NULL, 
+                    model_totalnumeo.p.d.f.i$se, NULL),
+          title="Modeling Number of Eating Occasions (EO) - Panel Data Approach",
+          float.env='sidewaystable', type='latex', omit=c("BlockNum"),
+          add.lines=list(c("BlockNum Fixed Effects", "TRUE", "TRUE",
+                           "FALSE", "TRUE", "FALSE"),
+                         c("BlockNum Random Effects", "FALSE", "FALSE",
+                           "TRUE", "FALSE", "TRUE"),
+                         c("--------------------------------", "------",
+                           "------","------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE,  single.row=FALSE,
+          dep.var.caption="",
+          no.space=TRUE,  header=FALSE,
+          omit.stat = c("rsq", "adj.rsq", "ser", "aic", "ll", "bic", "f"),
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```  
+
+Table 7 shows the combination of adding a time dimension, random effects for `BlockNum`, and interactions between treatment and time for dependent variable `TotalNumEO`. Clustered standard errors are included for fixed effects models (model variations (1),(2) and (4) in Table 7). Default standard errors are included for mixed effects models (model variations (3) and (5) in Table 7). Random effects do not require the use of the cluster correction for the errors (Morgan, 2011). 
+
+Note that for mixed effects models, typically we compute random effects on the basis of a participant, as captured in `ID`. In this case, participant level random effects had little difference compared with calculating random effects on `BlockNum`, as the blocks in this study contain at most 2 participants. For this reason, we have made use of random effects on `BlockNum` to simplify comparison of models.
+
+The first column of Table 7 contains the simplified panel data model which uses a specification similar to the one in Table 5 for aggregated eating occasions. In this model, the estimates on both treatment and baseline measure are similar to the aggregate model in Table 5. This suggests the importance of the baseline measure, as well as a clear negative effect of treatment when viewed in aggregate in a panel data setting. In particular however, we see that the estimate on `Treat` is a bit larger compared to the one seen in the aggregate model, and it also appears to be statistically significant at the $0.05$ level. This suggests that the aggregated model potentially obscured information that was present in the panel data set about potential effects treatment had on the total number of eating occasions. 
+
+In columns 2 and 3 in Table 7, time is added as a covariate to the panel data model. The difference between the models in columns 2 and 3 is that column 2 uses fixed effects for `BlockNum`, while column 3 uses random effects. The estimates and significance for both `Treat` and `MeanEO_Baseline` do not vary much across the models in columns 1, 2 and 3. `Treat` has a consistent statistically significant estimated effect of about $-0.3$ eating occasions with similar confidence intervals across the models in the first 3 columns. 
+
+Adding `Day` as a factored covariate in Columns 2 and 3 shows that eating behaviors appear to vary in aggregate across both treatment and control, with certain days having more of an effect than others. We specifically see some significant effects in days 3 and 4 with the largest increases in eating occasions for both treatment and control. The largest net decrease for treatment occurs on Day 6 in both models.  
+
+Importantly, comparing columns 2 and 3, estimates do not vary much whether we model with `BlockNum` as a fixed effect or a random effect. The point estimates are similar in value for all covariates, however the constant term appears to be quite different. The difference in the constant is due to the `BlockNum` fixed effects seen in the second column - this constant term captures Day 1 for the control group for the first block number in the fixed effects model (column 2), whereas this same term captures Day 1 for the control group, with no added effect from the first block number for the mixed effects model (column 3). 
+
+In columns 4 and 5 of Table 7, the interaction of the terms `Treat` with `Day` has been added to the models. Unlike the models in columns 2 and 3, these last two models allow us to see the specific time effects for treatment and control groups separately. In columns 2 and 3, time effects are shown in aggregate across both groups. Again, the difference between the models in column 4 and column 5 is the use of fixed effects or random effects for `BlockNum`. As seen in the models in column 2 and 3, this does not make much of a difference in terms of the estimates for our model covariates, although it does impact the constant term estimate.
+
+In columns 4 and 5, we see that most of the effect originally seen in the estimate on `Treat` is distributed to the interaction terms of `Treat` with `Day`, with most of the negative effect present later in the study. While the effects of treatment across time do not appear to be particularly significant, the estimates appear to show that treatment across time consistently has a negative effect on the total number of eating occasions per day as reported by participants. This is especially evident in the last day, a Saturday, where the control group sees a large jump in total eating occasions but the treatment group does not (the coefficient on `Treat:Day8` almost cancels out the coefficient seen in `Day8`). These models all show the same effect that applying treatment appears to have a generally negative effect on the number of times people eat in a day, regardless of whether this effect is studied in aggregate or across time.  
+
+Similar to the pair of Tables 5 and 6, Table 8 is a panel data analysis similar to Table 7, only the response variable is for meat, `NumMeatEO`, in Table 8. The model specifications and errors are prepared in a the same way as those prepared for Table 7 models, with the main difference being the variable used for the baseline measure (now `MeanMeatEO_Baseline`).
+
+\newpage
+
+```{r model5, warning=FALSE,echo=TRUE}
+# Model number of meat eating occasions (nested)
+
+# Fixed effects BlockNum
+model_nummeateo.p.o.f = lm(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + BlockNum, data=dt) 
+
+# Fixed effects BlockNum and Day
+model_nummeateo.p.d.f = lm(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + Day + BlockNum, data=dt) 
+
+# Fixed effects BlockNum & Interaction
+model_nummeateo.p.d.f.i = lm(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + Day*Treat + BlockNum, data=dt) 
+
+# Random effects BlockNum and Day
+model_nummeateo.p.d.r = lmer(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + Day + (1|BlockNum), data=dt) 
+
+# Random effects BockNum & Interaction
+model_nummeateo.p.d.r.i = lmer(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + Day*Treat + (1|BlockNum), data=dt) 
+```
+
+
+```{r model5_table, warning=FALSE,results='asis',message=FALSE,echo=FALSE}
+# Compute clustered standard errors
+model_nummeateo.p.o.f$se = clustered_se(model_nummeateo.p.o.f, dt$ID)
+model_nummeateo.p.d.f$se = clustered_se(model_nummeateo.p.d.f, dt$ID)
+model_nummeateo.p.d.f.i$se = clustered_se(model_nummeateo.p.d.f.i, dt$ID)
+# Mixed Effects Models doesn't require clustering std. errors 
+
+# Show results in stargazer
+stargazer(model_nummeateo.p.o.f, model_nummeateo.p.d.f, model_nummeateo.p.d.r, 
+          model_nummeateo.p.d.f.i, model_nummeateo.p.d.r.i,
+          se = list(model_nummeateo.p.o.f$se, model_nummeateo.p.d.f$se, NULL, 
+                    model_nummeateo.p.d.f.i$se, NULL),
+          title="Modeling Number of Meat Eating Occasions (EO) - Panel Data Approach", 
+          type='latex', omit=c("BlockNum", "ID"),
+          add.lines=list(c("BlockNum Fixed Effects",
+                           "TRUE", "TRUE", "FALSE", "TRUE", "FALSE"),
+                         c("BlockNum Random Effects",
+                           "FALSE", "FALSE", "TRUE", "FALSE", "TRUE"),
+                         c("--------------------------------", "------",
+                           "------","------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE, single.row=FALSE, no.space=TRUE,
+          float.env = "sidewaystable", header = FALSE,
+          dep.var.caption="",
+          omit.stat = c("rsq", "adj.rsq", "ser", "aic", "ll", "bic", "f"),
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```  
+
+The first column of Table 8 contains the simplified panel data model which uses a specification similar to the one in Table 6 for aggregated meat eating occasions. In this model, the estimates on both treatment, `Treat` and baseline measure, `MeanMeatEO_Baseline`, are similar to the aggregate model in Table 6 where the effect of treatment is estimated to be approximately $0$ with a confidence interval centered on $0$. This similarity with the aggregated model suggests that there is not much variability in the `NumMeatEO` that could have been obscured by the aggregated model, unlike what we saw with `TotalNumEO` in Table 7. 
+
+In columns 2 and 3 of Table 8, time is included through variable `Day`, with the second column using `BlockNum` fixed effects and the third column using `BlockNum` random effects. Comparing columns 2 and 3, the estimates using either fixed effects or random effects are fairly similar, with some larger variation on the precise estimate for the baseline measure and the constant term, but otherwise all terms are approximately the same in sign and magnitude. For both of the models in columns 2 and 3 the estimate on `Treat` remains constant at approximately $0$. 
+
+The inclusion of the `Day` variable shows that on average the change from the first day of the experiment to any of the later days (except the last day) appears to be a small negative effect of time on the number of meat eating occasions. Day 7, which fell on a Saturday in this study, showed a slight increase across both control and treatment groups. 
+
+
+The effects are consistent across both the fixed effects and the mixed effects models (columns 2 and 3) with the constant differing slightly. The difference in the constant is due to the `BlockNum` fixed effects seen in the second column - this constant term captures Day 1 for the control group for the first block number in the fixed effect model (column 2), whereas this same term captures Day 1 for the control group, with no added effect from the first block number for the random effect model (column 3), as was described in Table 7.
+
+Similarly to the `TotalNumEO` models in Table 7, the models in columns 2 and 3 of Table 8 only show time affects in aggregate for both treatment and control groups. To understand the effect of treatment over time the interactions of `Treat` and `Day`, are included in the models in columns 4 and 5 (the only difference between the two models is in the use of fixed vs. random effects for `BlockNum`). As was seen in the models in columns 2 and 3, the difference between fixed and random effects is mostly concentrated in the constant term and the baseline measure, while the remaining estimates are all approximately the same. 
+
+Unlike the model for `TotalNumEO` in Table 7, in columns 4 and 5 of Table 8, the coefficient on `Treat` rises from $0$ for columns 1-3 to approximately `+0.3` in both fixed effects and mixed effects models. There is a compensatory decrease in the estimates for the interaction terms. Examining the coefficients on the `Day` factors, it appears that the control group has a small (statistically insignificant) decrease in meat consumption on the second and third days of the experiment, with slightly larger increases in the later days, especially on the 7th day (a Saturday before Thanksgiving). 
+
+Comparing these estimates to those for the interaction term `Treat:Day` factors, keeping the estimate on `Treat` in mind, we see the estimated coefficients on the interactions are consistently negative. However, this still results in an overall positive treatment effect for most days in the study for the treatment group. In fact, all the treatment days shows a slight increase in meat consumption for the treatment group on Days 2 and 3 (compared to Day 1), followed by a slight decrease on days 4 and 5, and a final slight increase on days 6 and 7. 
+
+An interesting aspect is the 7th day of the experiment. On the 7th day, the control group experiences a relatively large increase in meat eating occasions with a coefficient of `r 0.382` for the fixed effects model. For the treatment group, this increase is much smaller, at `r 0.382 + 0.334 - 0.588` occasions. This suggests a situation where the control group saw an increase in meat eating behavior while the treatment group saw a smaller increase, indicating a possible small "success" of the treatment, as it seems to have possibly deterred meat eating behavior on this 7th day. It is important to note that most of the estimates in these models are not statistically significant, and it is possible that these results would be different were we to run the study again. Despite the relative statistical insignificance of the result, including the interaction term appears to show effects related to meat eating behavior across time in both the control and treatment group that may have been hidden when observing the aggregated model for meat eating behavior. Time series data is important.
+
+## Evaluating Attrition
+
+In the models in Tables 4-8, analysis has included only outcome measures that were successfully collected from our participants. However, because the outcomes from this experiment are self-reported by our participants, there was the potential that participants could have attritted from the study. One of the primary aspects of attrition to assess is whether the treatment itself had any effect on the number of outcome measures (out of 7) reported by participants over the course of the experiment. 
+
+```{r attrition_plot, fig.height=5, fig.width=9, echo=FALSE, fig.cap='Distribution of Outcome Measures Received in Experiment: Control vs. Treatment',message=FALSE}
+# Run a 2-sample t-test to evaluate whether the proportion of measures received in 
+# the experiment between treatment and control is statistically different
+t_out <- t.test(dt_1[dt_1$Treat == 0]$NumMeasureReceived, 
+       dt_1[dt_1$Treat == 1]$NumMeasureReceived)
+
+diff_means <- t_out$estimate[1]-t_out$estimate[2]
+diff_ci_low <- t_out$conf.int[1]
+diff_ci_up <- t_out$conf.int[2]
+
+colors = c("gray60", "darkgreen")
+
+numResponseFreq = as.data.frame(xtabs( ~ dt_1$Treat + dt_1$NumMeasureReceived))
+
+ggplot(data=numResponseFreq, aes(x=as.factor(dt_1.NumMeasureReceived), y=Freq, 
+                                 fill=as.factor(dt_1.Treat))) +
+  ggtitle("Distribution of Outcome Measures Received in Experiment: Control vs. Treatment") +
+  labs(fill="TreatmentLevel") +
+  theme_bw() +
+  theme(legend.position=c(0.1,.87))+
+  scale_fill_manual(values=colors, labels=c("Control", "Treatment"))+
+  xlab("Number of Outcome Measures Received in Experiment") + 
+  ylab("Number of Participants") +
+  geom_bar(aes(y=Freq), stat="identity", position="dodge2")
+```
+
+We can directly compare the number of measured outcomes collected for the treatment group vs. the control group by running a t-test to compare the two groups. Using the Welch two-sample t-test, we see that the difference between the mean number (with confidence interval) of outcomes collected from the treatment and control groups is `r round(diff_means,3)` (`r round(diff_ci_low,3)`,`r round(diff_ci_up,3)`) is not statistically significant at the $0.05$ level. 
+
+Visual comparison of the reporting numbers for the two groups for differential attrition is shown in the bar plot in Figure 6. In the bar plot, we see the comparison of the two distributions. However, from the plot and t-test, it does not appear that this experiment suffers from differential attrition - treatment status does not appear to impact the how many participants missed responding to 1 or more end-of-day surveys. Considering that most of our "attriters" do seem to fall in bins 4, 5, and 6, this suggests that "forgetting" or other random factors such as carrier maintenance was likely a common explanation for most of the attrition, as these participants responded to at least half of the evening surveys.
+
+We can also do a high-level evaluation of the effects of attrition in our study by modeling using only participants who reported all 7 outcome measures. As the bar plot above reveals that we had an approximately equal number of participants in both treatment and control who recorded all 7 outcome measures and that these participants make up the majority of our study (53/80), we believe this is a good approximate assessment of whether or not attrition had a major effect on our analysis (note that this method of attrition analysis was suggested to us by Professor David Reiley upon discussion of the nature of our study).
+
+For the sake of simplicity, we will look at comparing two of the models we developed previously (one for `TotalNumEO` and one for `NumMeatEO`) and compare these models to their "no-attrition" versions (i.e. model them using data from participants who reported all seven days of outcome measures). Specifically, we will use the first set of mixed effects models that do not include the interaction terms for simpler visual comparison of the pairs of models from the full data to the no-attrition data.   
+
+\newpage
+
+```{r attrit_prep,warning=FALSE,echo=FALSE}
+# Filter data to participants with no attrition (all measures received out of 7)
+noattrition_ids = dt_1[dt_1$NumMeasureReceived == 7]$ID
+dt_noattrition = dt[dt$ID %in% noattrition_ids]
+dt_noattrition$Day = factor(dt_noattrition$MeasureNum - 3)
+```
+
+
+```{r attrit_model, warning=FALSE,echo=TRUE}
+# Model number TotalNumEO & NumMeatEO with mixed effects model for no-attrition data  
+
+model_totalnumeo_noattrition.p.d.r = lmer(
+  TotalNumEO ~ Treat + MeanEO_Baseline + Day + (1|BlockNum), 
+  data=dt_noattrition)  
+
+model_nummeateo_noattrition.p.d.r = lmer(
+  NumMeatEO ~ Treat + MeanMeatEO_Baseline + Day + (1|BlockNum),
+  data=dt_noattrition)
+```
+
+
+```{r attrit_table,warning=FALSE,results='asis', message=FALSE, echo=FALSE}
+# Show results in stargazer
+stargazer(model_totalnumeo.p.d.r, model_totalnumeo_noattrition.p.d.r, 
+          model_nummeateo.p.d.r, model_nummeateo_noattrition.p.d.r,
+          title="Modeling With and Without 'Attritted' Participants",
+          type='latex', omit=c("BlockNum"),
+          add.lines=list(c("BlockNum Random Effects", "TRUE",
+                           "TRUE", "TRUE", "TRUE"),
+                         c("Includes 'Attrited' Participants",
+                           "TRUE", "FALSE", "TRUE", "FALSE"),
+                         c("--------------------------------", "------",
+                           "------","------", "------", "------", "------")),
+          intercept.bottom = FALSE, ci=TRUE, single.row=FALSE, no.space=TRUE,
+          float.env = "sidewaystable", header=FALSE,
+          omit.stat = c("rsq", "adj.rsq", "ser", "aic", "ll", "bic", "f"),
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```  
+
+Table 9, which includes both pairs of models, reveals that using either the data for all participants (columns 1 and 3) or the "no-attrition" data (columns 2 and 4) produces fairly similar results for the estimates, for both measures `TotalNumEO` and `NumMeatEO`. 
+
+Treatment estimates for `TotalNumEO` appear to be slightly larger and more significant than the original estimates, suggesting attrition may have had an effect on our estimates. Certain `Day` estimates show a similar pattern, although most appear to be only slightly different from the estimates made with the original model. 
+
+The outcome measure `NumMeatEO` shows a similar pattern. The treatment effect appears to be slightly larger for the no-attrition data, however we still cannot reject the null hypothesis of no treatment effect on meat eating behavior. `Day` estimates likewise see no significant difference. In sum, while there may or may not be a significant difference between the estimates of the pairs of models shown in Table 9, we still see that treatment seemed to have a negative effect on `TotalNumEO` both on average and across time, while treatment had little or no measurable effect on meat eating behaviour.
+
+
+## Evaluating Spillovers
+
+The assumption of non-interference between participants is key to ensuring unbiased estimation of the treatment effect in our single-level models. The validity of this experiment rests on the notion that exposure to a simple message about the impact of meat on climate change, combined with an alternative meatless recipe, could affect eating behaviours. We delivered that treatment message through our texting platform to our treatment group. Importantly, we wanted to ensure that our administration of treatment to the treatment group did not make the control population more likely to hear such messages than a member of the general population. In the early stages of designing the experiment we viewed interference as a particular challenge due to the method we used to collect our sample of participants. We recruited participants from within our own social networks, and, even more precisely, recruited participants from contexts where they may have had some degree of social connection with other participants (i.e. friend groups, classmates, etc). We had concerns that discussion amongst participants, particularly across treatment/control lines, would render the black-white binary division of treatment and control meaningless.  
+
+Analytical approaches to weighting the probability of spillover between participants that could apply in our treatment exist (social graphs help model probability of interaction) but were too difficult to implement given our time and budget constraints. We settled on adding a question in the post-survey to help assess the likely degree of impact of spillovers between participants. We asked two questions:   
+
+1. Did you discuss this experiment with any other participants?
+2. If so, who?
+
+We decided to address this issue through the post-survey instead of earlier in the study out of recognition that merely asking a question about interaction with other participants could itself spark interaction with other participants. The post-survey was completed by 73 of the 80 participants that were used in our analysis, and of those 73, only 2 indicated that they discussed the survey with another participant, explicitly between themselves. Given this, we feel more confident in asserting that the non-interference assumption does not appear to bias our results to any meaningful degree.  
+
+# Conclusion
+
+In this study we attempted to nudge eating behaviour with SMS reminders to encourage participants in the treatment group to eat less meat. 95 Participants enrolled through a survey, and eventually we collected outcome measures from 80 participants over the 3 days of baseline and 7 days of treatment. Due to blocking on baseline covariates, the covariates were well balanced between treatment and control, meaning that if we saw an effect we may have been able to claim causality. 
+
+Originally, we had proposed studying the fraction of meals each day at which participants ate meat, however we found that the number of eating occasions (meals and snacks) varied with treatment, and thus we could not study the fractional meat consumption. Unfortunately, the difference in raw numbers of daily meat consumption did not change over time, nor was there any difference between treatment and control in meat eating behaviour, so we were not able to answer our research question and we did not have enough significance to confirm or reject our hypothesis when analyzing at the aggregate level. Interestingly, the treatment group showed a statistically significant decrease in eating occasions as a result of treatment over time compared to the control group, indicating that our treatment had an effect, but it was not the one we originally hypothesised. In this case, possibly being made more conscious of eating behaviour due to mid-day reminders led to eating less often during the day.
+
+To further our analysis, we analysed the time series data as panel data, which allowed us to investigate the time effects more deeply. The panel data showed that the effect of treatment over time on the treatment group was different from control, especially regarding total eating occasions. There is thus a possibility that, with more participants and/or a longer study, we might have been able to elicit a more statistically significant effect.
+
+This study was limited in power, due to insufficient participants - a minimum of 107 participants were identified after the baseline study for 80% power. If this study were to be repeated we would try to obtain a far larger number of participants, as the absolute effect is small. 
+
+This study has a number of limitations. Participants in the study self-selected to participate, thus the generalizability to a general population is not valid. Additionally, this type of study relies on participants actually *reading* the nudging messages - there is no guarantee that they do - no way to ensure treatment is taken up. If participants are inconsistent in filling out end of day surveys, they may influence results, especially in aggregate (e.g. 7 measures for one participant, but only 4 for another). Finally, self-reported records of eating habits have been shown to be particularly poor quality (Dhurandhar et al., 2015), leading us to question whether this type of study, even if it shows statistically significant results, would have any real practical significance.
+
+Thank you to valuable insight from Prof. Micah Gell-Redman, Prof. D. Alex Hughes and Prof. David Reiley for their thoughtful insights and assistance.
+
+# Recommendations
+
+For any group who may want to take up this type of study in the future, we have a number of recommendations, especially in regards the text messaging platform and application of treatment:
+
+- Consider blocking by carrier in the event of a carrier outage, and collect carrier information from participants at enrollment time
+- Inform participants how much time they have to answer text messages (to encourage more timely responses) 
+- Inform participants to respond to outcome measures surveys when finished eating, not completing prior to stopping eating for the day  
+- Customize the texting platform such that requests to record outcome measures coincide with when participants are usually finished eating, as opposed to 8PM in the participant's time zone (did not do this for simplicity in this study)  
+- Allow & encourage qualitative comments from participants as they see fit.  
+- Add retry logic to messages to resend message after 1 hour if no response given (only once). We attempted to do this but found no simple way to implement this in Twilio.  
+- Use a shortcode instead of toll-free numbers. Shortcodes are the proper way of doing this sort of experimentation to avoid carrier filtering, but cost \$500+licensing+setup to implement, whereas toll-free numbers are $2 each with no setup required.  
+- Motivate participants in phone number confirmation to participate with the $25 gift card incentive  
+- Offering alternate forms of communication with experiment administrators in the event of a technical malfunction of the texting platform (e.g. texting admin’s personal numbers)  
+- Consider blocking by number of responses (out of 3) given in the baseline, in order to block on participants' tendency to respond  
+- Review the daily treatment messages with a panel prior to use in order to ensure messages have the optimum tone to convey the treatment without biasing outcomes
+
+# Incentivization and Funding  
+
+A random draw was held at the close of the post-study survey in order to determine the winners of 4 x \$25 Amazon Gift Cards. All emails of those who indicated they wished to be part of the draw were placed in an R dataframe, and the `sample` function in R was used to select 4 people at random. These people were sent electronic Amazon gift cards - 2 went to US participants from Amazon.com and 2 went to Canadian participants from Amazon.ca.
+
+Funding for this study was provided through the iSchool at University of California Berkeley, as allocated to W241, the MIDS course on Experiments and Causality. This funding went towards gift card incentives, as well as the fees for using the texting platform used to conduct the study.
+
+
+
+# REFERENCES
+
+Akhu-Zaheya, L., & Shiyab, W. (2017). The effect of short message system (SMS) reminder on adherence to a healthy diet, medication, and cessation of smoking among adult patients with cardiovascular diseases. International Journal of Medical Informatics, (98), 65–75. https://doi.org/10.1016/j.ijmedinf.2016.12.003  
+
+Ayres, I., Raseman, S., & Shih, A. (2009). EVIDENCE FROM TWO LARGE FIELD EXPERIMENTS THAT PEER COMPARISON FEEDBACK CAN REDUCE RESIDENTIAL ENERGY USAGE [NBER WORKING PAPER]. Retrieved from NATIONAL BUREAU OF ECONOMIC RESEARCH website: http://www.nber.org/papers/w15386  
+
+Cole-Lewis, H., & Kershaw, T. (2010). Text Messaging as a Tool for Behavior Change in Disease Prevention and Management. Epidemiologic Reviews, 32, 56–69. https://doi.org/10.1093/epirev/mxq004  
+
+Dhurandhar, N. V., Schoeller, D., Brown, A. W., Heymsfield, S. B., Thomas, D., Sørensen, T. I. A., … Allison, D. B. (2015). Energy balance measurement: When something is not better than nothing. International Journal of Obesity (2005), 39(7), 1109–1113. https://doi.org/10.1038/ijo.2014.199  
+
+Faraway, J. J. (2016). Extending the Linear Model with R: Generalized Linear, Mixed Effects and Nonparametric Regression Models. Chapman & Hall/CRC.  
+
+Fjeldsoe, B. S., Marshall, A. L., & Miller, Y. D. (2009). Behavior change interventions delivered by mobile telephone short-message service. American Journal of Preventive Medicine, 36(2), 165–173. https://doi.org/10.1016/j.amepre.2008.09.040  
+
+Gerber, A. S., & Green, D. P. (2012). Field Experiments. Retrieved from https://wwnorton.com/books/Field-Experiments  
+
+Gifford, R. (2011). The dragons of inaction: Psychological barriers that limit climate change mitigation and adaptation. American Psychologist, 66(4), 290–302. https://doi.org/10.1037/a0023566  
+
+Global Mobile Consumer Trends, 2nd edition. (2017). Retrieved from https://www2.deloitte.com/content/dam/Deloitte/us/Documents/technology-media-telecommunications/us-global-mobile-consumer-survey-second-edition.pdf  
+
+Hlavac, M. (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables. (Version 5.2.2) [R, R Package Version]. Retrieved from https://cran.r-project.org/web/packages/stargazer/index.html
+
+How You Can Help Fight Climate Change. (2017, October 30). Retrieved September 18, 2019, from NRDC website: https://www.nrdc.org/stories/how-you-can-help-fight-climate-change  
+
+Kallbekken, S., & Sælen, H. (2013). ‘Nudging’ hotel guests to reduce food waste as a win–win environmental measure. Economics Letters, 119(3), 325–327. https://doi.org/10.1016/j.econlet.2013.03  
+
+Monroe, J. T., Lofgren, I. E., Sartini, B. L., & Greene, G. W. (2015). The Green Eating Project: Web-based intervention to promote environmentally conscious eating behaviours in US university students. Public Health Nutrition, 18(13), 2368–2378. https://doi.org/10.1017/S1368980015002396  
+
+Moore, R. T. (2012). “Multivariate Continuous Blocking to Improve Political Science Experiments.” Political Analysis, 20(4), 460–479.  
+
+Moore, R. T., & Moore, S. A. (2013). “Blocking for Sequential Political Experiments”. Political Analysis, 21(4), 507–523.  
+
+Moore, R. T., & Schnakenberg, K. (2016). blockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments (Version 0.6-3) [R].  
+
+Morgan, J. (2011, Spring). Clustered standard errors and multi-level models [Question]. Retrieved from Stats.statsexchange.com website: https://stats.stackexchange.com/questions/8291/clustered-standard-errors-and-multi-level-models  
+
+Schulz, K. F., Altman, D. G., & Moher, D. (2010). CONSORT 2010 Statement: Updated guidelines for reporting parallel group randomised trials. BMJ, 340. https://doi.org/10.1136/bmj.c332  
+
+Silver, L. (2019, February 5). Smartphone Ownership Is Growing Rapidly Around the World, but Not Always Equally. Retrieved September 18, 2019, from Pew Research Center’s Global Attitudes Project website: https://www.pewresearch.org/global/2019/02/05/smartphone-ownership-is-growing-rapidly-around-the-world-but-not-always-equally/  
+
+Smith, M. K. (2012, April 10). Inappropriately Designating a Factor as Fixed or Random. Retrieved December 10, 2019, from COMMON MISTEAKS MISTAKES IN USING STATISTICS: Spotting and Avoiding Them website: https://web.ma.utexas.edu/users/mks/statmistakes/fixedvsrandom.html  
+
+Stea, S., & Pickering, G. J. (2019). Optimizing Messaging to Reduce Red Meat Consumption. Environmental Communication, 13(5), 633–648. https://doi.org/10.1080/17524032.2017.1412994  
+
+What works for behaviour change? (2018). Nature Human Behaviour, 2(10), 709–709. https://doi.org/10.1038/s41562-018-0459-4  
+
+
+\newpage
+\pagenumbering{gobble}
+
+# APPENDICES  
+
+## APPENDIX A: Study Administration Observations  
+
+- Some participants respond very late, past the time that the window for responses has expired (in which case, they send the first outcome measure, which has been recorded)
+- One participant out of 82 did not provide any baseline outcome measures to the study--all others gave at least one--thus this one participant was a non-complier
+- One participant shared a comment when their eating habits for the day were unusual E.g. “was at a conference and couldn’t prepare my meals like I normally do”  
+- One participant who has classified herself as “pescatarian” still seems to have eaten meat during certain outcome measures--either they misunderstood and classified fish as “meat” or they legitimately made exceptions. This question was clarified in the post-survey.
+- Occasionally receive comments in reply to treatment administrations e.g. a comment that “this makes me want to eat more meat”
+- Received feedback that the confirmation requests sometimes come before the treatment text, despite adding a 5 second pause between sending the two messages. Not sure how to fix this at this time except to increase the pause between sending the two messages, which may introduce more issues.
+- Completion of experiment text prompted one user to send outcome measures she forgot to send the night before; these were recorded
+- Completion of experiment text got a smiley face in response from one participant
+- People are much faster at responding during the day than during the evening
+- Most participants are relatively consistent with when they respond
+- Participants seem to be better about responding in a timely manner once they’ve gotten in the habit of responding (but need to confirm)
+
+
+---  
+
+
+## APPENDIX B: Documented Issues with Twilio and Texting Platforms in General  
+
+Experiment was run November 14-23, 2019
+
+- Night before launching the experiment (11/13) had a carrier outage on toll-free numbers due to maintenance. This is something that happens occasionally and may happen again.
+- Evening of 11/16, Verizon had “delays receiving inbound SMS sent from Verizon devices in the US towards Toll-Free numbers”, as reported by Twilio support--manually recorded outcome measures for the participant that informed me of this, but others may have been affected. Issue was resolved by morning of 11/17 when treatment was administered.
+- T-Mobile carrier maintenance evening of 11/17 that may affect toll-free numbers
+- T-Mobile carrier maintenance evening of 11/18 that may affect toll-free numbers  
+- Single participant has failed to receive SMS messages (failed to be delivered)--have reached out to support for inquiry, but not sure if this participant can be recovered (may have blocked number or be out of cellular range)
+- Sprint carrier maintenance evening of 11/21  
+- Emergency Toll-free maintenance in US morning of 11/23
+
+---
+
+## APPENDIX C: Post Experiment Survey Feedback  
+
+The following comments were received in the post survey feedback forms. Any personally identifying information has been removed.  
+
+- From one participant: the treatments were "not enough to overpower my understanding that I should eat a better diet" and "there were a couple [of the messages] that, as a participant, sounded pretentious". Specifically for treatment #6, “The peas.  I’m never eating an equivalent amount of peas. Even if “amount” is the appropriate replacement measure, the comment made me roll my eyes and want to eat a steak.”
+- From one participant: Commented that the treatment from day 3 “rings false to me”
+- From one participant: “And overall, I think the text message format may have affected your intervention somewhat: the info affected my understanding and could have directly or indirectly led to different decisions.  But I didn’t have opportunity (or necessarily interest) to try any of the recipes, and none of them prompted me to think “I don’t want Cajun Corn Chowder, but I actually would like some Corn Chowder from my mom’s recipe.” “So for the time constrained class exercise, I think this was great.”
+- From one participant: '“It wouldn’t surprise me if the backfire effect is correlated with those "societal issue measures”'
+- From one participant: A negative response about 'there was a lot of “agenda-pushing”' and that they were “less likely to be a vegetarian” after having been leaning towards becoming a vegetarian
+- Overall comments had a positive response to the experiment (we have not analysed for control/treatment balance of the comments)
+- From a number of participants: simply observing eating habits has caused some people to be more conscious about their eating habits (and change their eating habits)  
+
+---
+
+
+
+## APPENDIX D: Histograms of Pre-treatment Covariates
+
+Look at distributions of covariates amongst participants.
+
+```{r cov_histograms, echo=FALSE, fig.cap='Covariate Histograms in the Appendix', fig.width=7, fig.height=8}
+#subset the covariates to just the ones that are numerics (leaving the categoricals out)
+numerics <- c('MeanMeatEO_Baseline', 'allergybinary', 'mealplan',
+              'keto', 'vegetarian', 'endtime', 'agerangecat',
+              'gendercat', 'locationcat', 'MeanEO_Baseline',
+              'MeanFruitVegEO_Baseline', 'climate', 'health',
+              'education', 'animalrights', 'politics', 'immigration',
+              'foreignaffairs')
+covars_plot <- dtcovars[,..numerics]
+ggplot(gather(covars_plot),aes(value))+geom_histogram(bins=10)+
+  facet_wrap(~key,scales='free',nrow=6)
+
+# Plots of select variables for the presentation ###  
+
+p1 <- ggplot(dtcovars,aes(dtcovars$agerange)) +
+  stat_count(fill='deepskyblue') + xlab('Age')
+p2 <- ggplot(dtcovars,aes(dtcovars$gender)) + 
+  stat_count(fill='tomato') + xlab('Gender')
+p3 <- ggplot(dtcovars,aes(dtcovars$location)) + 
+  stat_count(fill='darkseagreen4') + xlab('Location')
+
+ptot <- grid.arrange(p1,p2,p3, nrow=3,respect=TRUE, widths=2)
+#ggsave('Participants.jpg', plot=ptot)
+```
+
+\newpage
+
+## APPENDIX E: Session Info  
+
+Information on all packages, versions and machine that this report was run on follows.  
+
+```{r session_info, include=TRUE, echo=TRUE, results='markup'}
+devtools::session_info()
+```
+
+\newpage
+
+## APPENDIX F: Code Chunks  
+
+```{r getlabels, echo = FALSE}
+labs <- knitr::all_labels()
+knitr::all_labels()
+```
+
+```{r allcode, ref.label = labs, eval = FALSE}
+```  
+
+
+\newpage
+
+## APPENDIX G: Twilio Texting Flow and Treatment Messages  
+
+(PDF: TwilioWorkflowsHuman-Readable.pdf)
+
+\newpage
+
+## APPENDIX H: Enrollment Survey
+
+(PDF: Enrollment Survey - Eating Habits - Google Forms.pdf)  
+
+\newpage
+
+## APPENDIX I: Pilot Enrollment Survey
+
+(PDF: Pilot Enrollment Survey - Eating Habits - Google Forms.pdf)
+
+\newpage
+
+## APPENDIX J: Pilot and Main Study Post Study Surveys
+
+(PDFs: Pilot Post-Survey - Eating Habits - Google Forms.pdf; Post-Survey - Eating Habits - Google Forms.pdf )
+
+\newpage
+
+## APPENDIX K: Blocking Workbook
+
+(PDF: FinalStudy_BaselineBlocking_cleaned.pdf)

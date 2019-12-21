@@ -1,0 +1,94 @@
+﻿Timestamp,agerange,gender,location,timezone,country,climate,health,education,animalrights,politics,immigration,foreignaffairs,allergy,eatertype,diet,mealplanner,eatingoccasions,fruitveg,meat,fishseafood,grains,doneeating,permission
+11/10/2019 12:43,40-49,Male,Suburban,Pacific,USA,5,4,5,2,4,2,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,2,3,0,4,9:00 PM,Yes
+11/10/2019 13:45,40-49,Male,Urban,Eastern,USA,5,4,5,4,3,4,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,4,2,1,0,2,8:00 PM,Yes
+11/10/2019 13:45,40-49,Male,Urban,Pacific,USA,5,5,5,4,5,4,4,None,Any other,No Special Diet,Not relevant to me,3,3,2,1,2,9:00 PM,Yes
+11/10/2019 14:21,18-29,Female,Urban,Pacific,USA,4,4,4,3,5,4,3,"Dairy, Egg",Any other,No Special Diet,Not relevant to me,2,2,1,0,2,9:00 PM,Yes
+11/10/2019 15:14,60+,Female,Suburban,Pacific,USA,4,5,5,5,3,4,3,"Dairy, Soy",Any other,No Special Diet,Shared responsibility for meal planning in my household,3,1,1,0,1,7:00 PM,Yes
+11/10/2019 16:47,50-59,Female,Suburban,Central,USA,5,5,5,4,4,4,5,None,Pescatarian,"Ketogenic (Dukan, Atkins, Generalized Keto)",Shared responsibility for meal planning in my household,,,,,,,
+11/10/2019 16:58,50-59,Female,Urban,Mountain,USA,5,4,5,3,5,5,5,"Dairy, Gluten",Any other,No Special Diet,Shared responsibility for meal planning in my household,3,1,2,0,1,7:00 PM,Yes
+11/10/2019 17:02,18-29,Male,Suburban,Pacific,USA,4,5,5,3,2,4,2,None,Any other,No Special Diet,Not relevant to me,5,3,3,0,1,7:00 PM,Yes
+11/10/2019 17:07,40-49,Male,Urban,Pacific,USA,4,4,4,3,5,4,4,Gluten,Any other,Gluten free (not a diet per se),Shared responsibility for meal planning in my household,6,2,1,0,3,8:00 PM,Yes
+11/10/2019 17:49,18-29,Male,Urban,Eastern,Canada,3,5,4,2,4,5,3,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,2,1,1,2,8:00 PM,Yes
+11/11/2019 8:12,30-39,Male,Suburban,Mountain,USA,4,5,5,2,2,3,3,Dairy,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,1,2,1,5,10 PM or Later,Yes
+11/11/2019 8:56,50-59,Male,Urban,Pacific,USA,5,4,5,4,2,4,4,None,Any other,Just try to eat healthy,"No, I do not meal plan for my household",5,2,2,0,1,9:00 PM,Yes
+11/11/2019 12:39,30-39,Female,Suburban,Mountain,USA,4,5,5,4,5,4,4,None,Vegetarian,No Special Diet,Shared responsibility for meal planning in my household,,,,,,,
+11/11/2019 13:53,40-49,Male,Urban,Eastern,Canada,3,4,4,1,4,4,3,None,Any other,Intermittent Fasting,"No, I do not meal plan for my household",2,2,1,0,0,8:00 PM,Yes
+11/11/2019 16:00,18-29,Male,Urban,Pacific,USA,1,3,1,3,2,2,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",3,1,1,0,3,10 PM or Later,Yes
+11/11/2019 21:13,30-39,Female,Urban,Pacific,USA,4,5,3,3,5,3,5,None,Any other,No Special Diet,"Yes, I am the main meal planner",2,2,1,0,2,8:00 PM,Yes
+11/12/2019 5:32,40-49,Female,Urban,Pacific,USA,4,4,4,3,4,3,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,4,3,1,0,4,8:00 PM,Yes
+11/12/2019 5:47,18-29,Male,Urban,Eastern,USA,4,4,5,3,4,3,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",4,2,2,0,1,9:00 PM,Yes
+11/12/2019 6:38,30-39,Male,Urban,Pacific,USA,3,3,4,4,4,4,4,None,Vegetarian,No Special Diet,Shared responsibility for meal planning in my household,,,,,,,
+11/12/2019 9:17,40-49,Female,Rural,Eastern,USA,5,5,5,4,4,3,5,"Gluten, Nuts, Other",Any other,"Franchises: Weight Watchers, Noom, SlimFast, Jenny Craig, South Beach, etc.",Shared responsibility for meal planning in my household,5,3,2,0,3,9:00 PM,Yes
+11/12/2019 9:43,50-59,Female,Suburban,Mountain,Canada,3,4,4,4,3,3,3,None,Any other,"Ketogenic (Dukan, Atkins, Generalized Keto)",Shared responsibility for meal planning in my household,5,3,4,0,1,8:00 PM,Yes
+11/12/2019 9:51,30-39,Male,Urban,Mountain,Canada,4,5,5,2,5,2,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,7,4,2,0,4,9:00 PM,Yes
+11/12/2019 9:52,18-29,Male,Urban,Pacific,USA,3,4,4,2,3,5,4,Dairy,Any other,No Special Diet,Shared responsibility for meal planning in my household,2,1,2,0,1,8:00 PM,No
+11/12/2019 9:57,18-29,Male,Urban,Pacific,USA,4,5,5,4,3,5,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,3,1,2,1,2,8:00 PM,Yes
+11/12/2019 10:16,30-39,Female,Suburban,Pacific,Canada,4,5,4,2,5,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,2,1,1,3,8:00 PM,Yes
+11/12/2019 10:39,30-39,Female,Urban,Mountain,Canada,5,5,5,5,4,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",6,4,2,0,2,9:00 PM,Yes
+11/12/2019 10:40,18-29,Male,Suburban,Central,USA,5,5,5,3,2,5,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,4,2,1,3,9:00 PM,Yes
+11/12/2019 10:43,30-39,Male,Suburban,Eastern,USA,3,4,5,2,4,3,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",3,1,3,1,2,8:00 PM,Yes
+11/12/2019 11:05,18-29,Female,Urban,Mountain,Canada,2,2,1,2,2,2,2,None,Any other,Limited meat,Shared responsibility for meal planning in my household,4,3,1,0,2,9:00 PM,Yes
+11/12/2019 11:06,50-59,Female,Suburban,Mountain,Canada,4,5,5,3,2,3,3,None,Any other,No Special Diet,"No, I do not meal plan for my household",5,4,1,1,2,10 PM or Later,Yes
+11/12/2019 11:10,50-59,Female,Rural,Central,Canada,4,5,5,4,4,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,2,0,3,9:00 PM,Yes
+11/12/2019 11:21,40-49,Female,Suburban,Pacific,Canada,4,4,4,4,5,4,5,None,Any other,No mammals. (chicken & fish ok),Shared responsibility for meal planning in my household,6,4,1,0,5,8:00 PM,Yes
+11/12/2019 11:44,30-39,Female,Suburban,Mountain,Canada,5,5,5,3,5,3,4,None,Any other,Renaissance Periodization,"Yes, I am the main meal planner",5,3,4,1,4,8:00 PM,Yes
+11/12/2019 12:10,18-29,Female,Rural,Mountain,Canada,4,5,5,4,4,4,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,3,1,0,2,7:00 PM,Yes
+11/12/2019 13:11,50-59,Male,Suburban,Eastern,USA,2,3,3,4,3,5,4,None,Any other,No Special Diet,"No, I do not meal plan for my household",4,2,3,0,2,10 PM or Later,Yes
+11/12/2019 13:22,50-59,Female,Suburban,Eastern,USA,5,4,3,1,4,3,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",4,4,2,0,3,9:00 PM,Yes
+11/12/2019 13:24,40-49,Female,Suburban,Central,USA,5,5,5,4,3,4,3,"Dairy, Nuts, Soy",Vegetarian,No Special Diet,"Yes, I am the main meal planner",,,,,,,
+11/12/2019 13:27,60+,Male,Suburban,Eastern,USA,4,5,5,3,4,5,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,4,2,2,0,3,8:00 PM,Yes
+11/12/2019 13:35,50-59,Female,Suburban,Pacific,Canada,3,4,4,4,2,3,3,"Dairy, Nuts, Fish or Shellfish",Any other,No Special Diet,"Yes, I am the main meal planner",4,3,2,0,3,7:00 PM,Yes
+11/12/2019 13:37,50-59,Female,Rural,Eastern,USA,5,5,4,3,3,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,4,2,1,2,7:00 PM,Yes
+11/12/2019 13:52,50-59,Non-binary/Other,Urban,Pacific,USA,5,3,5,4,5,4,4,None,Pescatarian,"Franchises: Weight Watchers, Noom, SlimFast, Jenny Craig, South Beach, etc.","Yes, I am the main meal planner",,,,,,,
+11/12/2019 13:55,30-39,Male,Urban,Mountain,Canada,5,5,5,4,5,3,5,None,Any other,Mediterranean (https://www.healthlinkbc.ca/health-topics/aa98646),Shared responsibility for meal planning in my household,5,2,2,1,1,8:00 PM,Yes
+11/12/2019 13:58,40-49,Female,Suburban,Pacific,USA,4,4,4,4,4,4,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,3,3,0,4,8:00 PM,Yes
+11/12/2019 13:58,30-39,Female,Urban,Mountain,Canada,3,4,3,1,4,2,4,Gluten,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,4,2,1,3,8:00 PM,Yes
+11/12/2019 14:12,50-59,Female,Suburban,Eastern,USA,3,4,4,4,2,3,3,Nuts,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,1,0,3,9:00 PM,Yes
+11/12/2019 14:21,60+,Female,Suburban,Eastern,USA,2,5,5,4,4,3,4,Dairy,Any other,"Other Low Carbohydrate Diets (The Zone, Paleo, others)","Yes, I am the main meal planner",3,2,2,2,2,7:00 PM,Yes
+11/12/2019 14:46,40-49,Female,Suburban,Central,USA,5,5,5,3,3,5,5,None,Vegetarian,No Special Diet,"Yes, I am the main meal planner",,,,,,,
+11/12/2019 14:47,18-29,Female,Suburban,Pacific,USA,4,3,5,4,4,4,3,None,Any other,"Other Low Carbohydrate Diets (The Zone, Paleo, others)",Shared responsibility for meal planning in my household,5,2,3,0,2,7:00 PM,Yes
+11/12/2019 14:52,40-49,Female,Urban,Pacific,USA,5,5,5,5,5,5,5,None,Any other,No Special Diet,"Yes, I am the main meal planner",3,2,1,0,2,7:00 PM,Yes
+11/12/2019 14:55,18-29,Male,Urban,Pacific,USA,3,4,3,3,1,5,1,None,Any other,No Special Diet,"Yes, I am the main meal planner",4,3,2,0,4,9:00 PM,Yes
+11/12/2019 15:24,18-29,Female,Urban,Mountain,Canada,5,5,5,5,3,4,3,None,Any other,No Special Diet,"Yes, I am the main meal planner",3,1,2,1,3,10 PM or Later,Yes
+11/12/2019 16:00,30-39,Female,Urban,Eastern,USA,3,5,4,3,2,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",6,4,1,1,3,9:00 PM,Yes
+11/12/2019 16:16,50-59,Female,Suburban,Central,USA,4,4,4,4,1,4,4,None,Any other,Organic whole / minimally processed,"Yes, I am the main meal planner",7,7,1,1,3,7:00 PM,Yes
+11/12/2019 16:48,40-49,Male,Urban,Mountain,Canada,5,4,5,4,4,5,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,6,4,2,1,4,9:00 PM,Yes
+11/12/2019 17:06,50-59,Male,Suburban,Pacific,USA,4,4,4,3,3,2,2,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,3,1,1,0,1,9:00 PM,Yes
+11/12/2019 17:44,60+,Female,Suburban,Pacific,USA,5,4,4,5,4,5,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,3,2,2,1,3,8:00 PM,Yes
+11/12/2019 18:00,50-59,Female,Suburban,Mountain,Canada,4,4,4,4,5,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",6,6,2,0,4,9:00 PM,Yes
+11/12/2019 18:36,50-59,Female,Suburban,Mountain,Canada,5,5,3,4,5,4,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",4,4,2,1,1,9:00 PM,Yes
+11/12/2019 18:38,60+,Male,Suburban,Pacific,USA,3,3,3,3,3,3,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,3,2,2,1,3,8:00 PM,Yes
+11/12/2019 18:44,50-59,Female,Suburban,Mountain,Canada,3,1,2,1,3,3,4,Dairy,Any other,Intermittent Fasting,"Yes, I am the main meal planner",3,2,2,0,1,7:00 PM,Yes
+11/12/2019 19:01,50-59,Female,Urban,Pacific,Canada,5,5,5,4,5,4,5,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,5,2,1,4,7:00 PM,Yes
+11/12/2019 19:02,50-59,Female,Suburban,Mountain,Canada,5,5,4,4,4,3,3,None,Any other,Intermittent Fasting,"Yes, I am the main meal planner",3,2,3,0,2,7:00 PM,Yes
+11/12/2019 19:03,30-39,Female,Rural,Mountain,USA,3,5,5,3,4,3,3,Other,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,2,0,2,7:00 PM,Yes
+11/12/2019 19:07,30-39,Female,Urban,Mountain,Canada,3,4,4,4,3,3,2,None,Any other,Jenny Craig,"Yes, I am the main meal planner",5,3,3,1,3,8:00 PM,Yes
+11/12/2019 19:18,60+,Female,Urban,Mountain,Canada,4,4,3,3,3,3,3,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,4,2,1,3,8:00 PM,Yes
+11/12/2019 19:26,40-49,Female,Suburban,Mountain,Canada,2,1,1,3,2,2,2,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,2,1,5,9:00 PM,Yes
+11/12/2019 19:41,30-39,Male,Urban,Pacific,USA,5,5,4,4,2,3,3,None,Any other,No Special Diet,"No, I do not meal plan for my household",3,2,2,1,2,8:00 PM,Yes
+11/12/2019 19:42,40-49,Female,Suburban,Mountain,Canada,1,4,3,4,2,3,2,Nuts,Any other,"Other Low Carbohydrate Diets (The Zone, Paleo, others)","Yes, I am the main meal planner",2,1,2,0,1,8:00 PM,Yes
+11/12/2019 20:16,50-59,Female,Urban,Central,USA,4,4,3,3,3,2,5,None,Any other,No Special Diet,"Yes, I am the main meal planner",6,3,3,0,6,8:00 PM,Yes
+11/12/2019 20:27,30-39,Female,Urban,Eastern,USA,5,5,5,4,4,4,4,Fish or Shellfish,Any other,No Special Diet,Shared responsibility for meal planning in my household,3,1,1,0,3,7:00 PM,Yes
+11/12/2019 20:40,40-49,Female,Suburban,Pacific,Canada,4,4,4,4,4,4,4,Dairy,Any other,No Special Diet,"Yes, I am the main meal planner",6,3,2,1,4,10 PM or Later,Yes
+11/12/2019 21:14,30-39,Female,Rural,Eastern,USA,5,4,5,4,3,4,4,"Dairy, Other",Any other,No Special Diet,Shared responsibility for meal planning in my household,2,1,1,0,2,7:00 PM,Yes
+11/12/2019 21:26,50-59,Female,Suburban,Mountain,Canada,4,5,5,4,4,4,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,3,1,1,3,7:00 PM,Yes
+11/12/2019 21:32,50-59,Male,Suburban,Pacific,USA,3,3,2,2,2,1,2,None,Vegetarian,No Special Diet,Shared responsibility for meal planning in my household,,,,,,,
+11/12/2019 21:47,40-49,Female,Suburban,Mountain,Canada,3,5,5,4,4,3,3,Other,Any other,Macro based- specific to my workout times,"Yes, I am the main meal planner",6,4,3,0,4,9:00 PM,Yes
+11/12/2019 22:05,60+,Female,Rural,Eastern,USA,5,5,5,5,3,4,4,None,Any other,No Special Diet,"No, I do not meal plan for my household",3,1,1,0,2,8:00 PM,Yes
+11/12/2019 23:36,50-59,Female,Urban,Mountain,Canada,4,4,4,4,3,4,3,None,Vegetarian,No Special Diet,"Yes, I am the main meal planner",,,,,,,
+11/13/2019 0:01,40-49,Male,Suburban,Eastern,USA,5,5,5,3,3,3,3,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,4,2,4,0,4,10 PM or Later,Yes
+11/13/2019 4:57,40-49,Female,Urban,Mountain,Canada,3,4,4,3,4,3,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,2,2,0,3,7:00 PM,Yes
+11/13/2019 5:29,60+,Female,Urban,Central,USA,2,4,3,3,4,4,4,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,1,1,0,5,8:00 PM,Yes
+11/13/2019 7:28,40-49,Female,Urban,Mountain,Canada,4,4,5,4,4,3,2,None,Any other,No Special Diet,"Yes, I am the main meal planner",4,3,2,0,3,8:00 PM,Yes
+11/13/2019 7:54,50-59,Female,Urban,Mountain,Canada,2,1,1,3,3,2,2,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,5,3,2,1,4,7:00 PM,Yes
+11/13/2019 8:36,30-39,Female,Suburban,Pacific,USA,5,5,4,4,5,3,3,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,4,0,1,4,8:00 PM,Yes
+11/13/2019 9:30,30-39,Female,Urban,Eastern,USA,4,5,4,3,5,5,4,None,Any other,Intermittent Fasting,"Yes, I am the main meal planner",4,2,1,1,2,7:00 PM,Yes
+11/13/2019 10:28,30-39,Male,Urban,Pacific,USA,5,4,4,3,4,4,5,Dairy,Any other,No Special Diet,Shared responsibility for meal planning in my household,6,4,1,0,4,10 PM or Later,Yes
+11/13/2019 11:02,50-59,Female,Suburban,Mountain,Canada,2,5,5,1,3,3,2,Fish or Shellfish,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,2,1,4,9:00 PM,Yes
+11/13/2019 11:45,30-39,Female,Suburban,Mountain,Canada,5,5,5,5,5,5,5,"Dairy, Soy, Other",Any other,Intermittent Fasting,"Yes, I am the main meal planner",3,3,1,1,1,7:00 PM,Yes
+11/13/2019 12:21,18-29,Female,Urban,Pacific,Canada,4,5,4,4,4,4,5,Other,Any other,"Other Low Carbohydrate Diets (The Zone, Paleo, others)","Yes, I am the main meal planner",4,4,2,1,0,10 PM or Later,Yes
+11/13/2019 12:28,30-39,Male,Suburban,Pacific,USA,2,3,5,1,4,5,5,None,Any other,No Special Diet,Shared responsibility for meal planning in my household,8,2,0,0,6,9:00 PM,Yes
+11/13/2019 13:02,30-39,Male,Suburban,Pacific,USA,5,5,5,5,4,5,5,None,Any other,"Other Low Carbohydrate Diets (The Zone, Paleo, others)",Shared responsibility for meal planning in my household,4,2,2,0,2,8:00 PM,No
+11/13/2019 16:47,30-39,Female,Urban,Eastern,USA,5,4,4,5,4,3,4,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,1,1,0,8:00 PM,Yes
+11/13/2019 18:36,30-39,Female,Urban,Mountain,Canada,4,4,5,4,3,3,3,None,Any other,No Special Diet,"Yes, I am the main meal planner",5,3,2,0,4,9:00 PM,Yes
+11/13/2019 22:03,18-29,Female,Suburban,Pacific,USA,5,4,4,3,3,4,3,None,Any other,No Special Diet,"No, I do not meal plan for my household",3,2,3,0,3,8:00 PM,Yes

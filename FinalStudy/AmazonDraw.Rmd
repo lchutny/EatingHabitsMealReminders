@@ -1,0 +1,40 @@
+---
+title: "Amazon Draw"
+author: "DI_LC_AZT"
+date: "27/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+postsurvey <- fread('PostSurveyClean.csv')
+pilotpostsurvey <- fread('../PilotStudyPrep/PilotPostSurvey.csv')
+```
+
+
+```{r}
+colnames(postsurvey)
+colnames(pilotpostsurvey)
+```
+
+```{r}
+emails <- postsurvey[raffle=='Yes',Email]
+emails2 <- pilotpostsurvey$`Email Address`
+```
+
+```{r}
+allemails <- c(emails,emails2,emailx)
+length(allemails)
+```
+
+```{r}
+winners <- sample(allemails,4)
+```
+
+```{r}
+winners
+```
+

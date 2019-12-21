@@ -1,0 +1,97 @@
+---
+title: "Final Project"
+author: "DI_LC_AZT"
+date: "20/10/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Looking at power of experiment beforehand:
+Assume:
+$\mu_c = \dfrac{14}{21}$ meals for the week contain meat for the control group - Guess  
+$\mu_t = \dfrac{11}{21}$ meals for the week contain meat for the treatment group - Guess    
+$\sigma = \dfrac{2}{21}$ meals for the week std. dev. for treatment and control - Guess   
+$N = 20$ number of total participants in block; half in control, half in treatment- Guess  
+$\alpha = 0.05$ significance level  
+
+From Gerber and Green, p. 93:  
+$\beta = \Phi\left(\dfrac{|\mu_t-\mu_c|\sqrt{N}}{2\sigma}-\Phi^{-1}\left(1-\frac{\alpha}{2}\right)\right)$  
+
+```{r}
+# Textbook example - they get 80% power
+mut <- 65
+muc <- 60
+sigma <- 20
+N <- 500
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+
+```{r}
+# Guesstimate at our power with one treatment effect
+mut <- 14/21
+muc <- 11/21
+sigma <- 2/21
+N <- 20
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+
+
+# Power of Full Experiment
+
+Looking at power of experiment beforehand:
+Assume:
+$\mu_c = \dfrac{14}{21}$ meals for the week contain meat for the control group - Guess  
+$\mu_t = \dfrac{11}{21}$ meals for the week contain meat for the treatment group - Guess    
+$\sigma = \dfrac{2}{21}$ meals for the week std. dev. for treatment and control - Guess   
+$N = 20$ number of total participants in block; half in control, half in treatment- Guess  
+$\alpha = 0.05$ significance level  
+
+From Gerber and Green, p. 93:  
+$\beta = \Phi\left(\dfrac{|\mu_t-\mu_c|\sqrt{N}}{2\sigma}-\Phi^{-1}\left(1-\frac{\alpha}{2}\right)\right)$  
+
+
+```{r}
+# Guesstimate at our power with TWO treatment effects
+mut <- 14/28
+muc <- 11/28
+sigma <- 2/28
+N <- 27
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+

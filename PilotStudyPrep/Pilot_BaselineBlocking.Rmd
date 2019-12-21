@@ -1,0 +1,159 @@
+---
+title: "Pilot_BaselineBlocking"
+author: "DI_LC_AZT"
+date: "08/11/2019"
+output: 
+    html_document: default
+    pdf_document: default
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(
+    inputFile, encoding = encoding,
+    output_format = c('pdf_document')) 
+    })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(blockTools)
+library(data.table)
+library(knitr)
+```
+
+
+# Import Data and Clean
+- No cleaning done in Excel on raw baseline data
+
+```{r}
+rawdata <- read.csv('PilotBaselineResults.csv')
+surveydata <- read.csv('Pilot Enrollment Survey - Eating HabitsClean.csv')
+dim(rawdata)
+```
+
+```{r results='hide'}
+str(rawdata)
+```
+
+```{r results='hide'}
+str(surveydata)
+```
+
+
+```{r}
+levels(surveydata$eatertype)
+levels(surveydata$mealplanner)
+levels(surveydata$allergy)
+levels(surveydata$diet)
+```
+
+
+- Eliminate Rows where `eatertype` is `Vegetarian`, `Vegan` or `Pescatarian`, i.e. select only rows where eatertype is `Meat Eater` or `None of these`. In this case, not necessary, as there are only 2 factors in the respondents. Similarly we have 3 factor levels required for the mealplanner. Filter out 'Keto diet' types.
+- Merge dataframes and remove unneccesary columns
+
+```{r}
+rawdata <- data.table(rawdata)
+surveydata <- data.table(surveydata)
+
+workingdt <- merge(rawdata,surveydata,by='Name')
+head(workingdt)
+dim(workingdt)
+
+workingdt <- workingdt[diet!='Ketogenic (Dukan, Atkins, Generalized Keto)',]
+dim(workingdt)
+
+workingdt <- workingdt[MeasureReceived==1]
+dim(workingdt)
+```
+
+
+# Create Blocking and Treatment Variables
+
+- Proportion of meat meals (1: >0-0.25, 2: >0.25-0.5, 3: >0.5-0.75, 4: 0.75-1)  
+- Food Allergies present (1) or None (0)  
+- Already created: Meal Planning Status (factor): (1: Not Relevant, 2: Shared responsibility, 3: Yes Main Planner)  
+
+SO:  
+- Adjust the allergy column, so that if it is 'None', it becomes 0 and all other values = 1   
+- ConvertMealPlanner column from factors  
+- Finally, calculate the proportion of meat meals and also create a factor column for the ranges  
+
+AND:  
+- create the treatremind, treatrecipe, control columns, and set all to 0  
+
+```{r}
+workingdt[,allergybinary:=0]
+workingdt[allergy != 'None', allergybinary := 1]
+workingdt[,propmeat:=NumMeatEO/TotalNumEO ]
+workingdt[,propmeatrange := 1] # set default value
+workingdt[propmeat > 0.25 & propmeat <= 0.5, propmeatrange := 2]
+workingdt[propmeat > 0.5 & propmeat <= 0.75, propmeatrange := 3]
+workingdt[propmeat > 0.75 & propmeat <= 1.0, propmeatrange := 4]
+workingdt[,c('treatremind','treatrecipe','control'):= 0]
+workingdt$mealplanner <- as.numeric(workingdt$mealplanner)
+```
+
+# Do the Blocking
+
+```{r}
+out <- block(workingdt,n.tr=3,id.vars=c('phonenumber','Name'),
+             block.vars=c("propmeatrange","allergybinary","mealplanner"),
+             verbose=FALSE)
+```
+
+
+```{r}
+out$blocks
+```
+# Resultant Blocks
+From the above we can see that the 3 Treatment conditions: 'Unit 1', 'Unit 2' and 'Unit 3' are selected into 3 blocks - the rows.   
+
+Must cite: Moore, Ryan T. and Keith Schnakenberg. "blockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments", Version 0.6-3, December 2016.  
+
+and the papers:  
+
+Moore, Ryan T. ``Multivariate Continuous Blocking to Improve Political Science Experiments''. Political Analysis, 20(4):460--479, Autumn 2012.   
+
+Moore, Ryan T. and Sally A. Moore. ``Blocking for Sequential Political Experiments''. Political Analysis, 21(4):507–523, 2013.  
+
+Now assign these numbers/treatments to the 3 columns in the workingdata table at random.  
+
+```{r}
+assigned <- assignment(out, namesCol=c('control','treatremind','treatrecipe'),seed=42)
+outCSV(assigned)
+```
+
+Set this data back into the working data table - can't figure out how to get it out of the blocktools assignment object, so just sent to CSV and remiported it.  
+
+```{r}
+randomized <- data.table(read.csv('Group1.csv'))
+randomized
+```
+
+```{r}
+workingdt[phonenumber %in% randomized[,control], control:=1]
+workingdt[phonenumber %in% randomized[,treatremind], treatremind:=1]
+workingdt[phonenumber %in% randomized[,treatrecipe], treatrecipe:=1]
+```
+
+# Extract to send to Diana for texting - MAKE SURE IN FULL STUDY TO INCLUDE BLOCK NUMBER
+
+```{r}
+assignments <- workingdt[,c("Name","PhoneNumber","treatremind","treatrecipe","control"),with=FALSE]
+assignments
+```
+
+Export to CSV  
+
+```{r}
+write.csv(assignments,file='PilotTreatAssignments.csv', row.names = FALSE)
+```
+
+# Extract Comments and export to CSV
+
+```{r}
+feedback <- workingdt[,c("feedback"),with=FALSE]
+write.csv(feedback,file='PilotEnrollmentSurveyFeedback.csv')
+```
+

@@ -1,0 +1,101 @@
+---
+title: "EDA-dianai"
+author: "Diana Iftimie"
+date: "12/1/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(foreign)
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+```
+
+
+# Load the Data!
+
+```{r}
+d = fread("!FinalStudyData.csv")
+
+# Replace all -1 values with NA
+d[d == -1] <- NA
+
+head(d, 20)
+```
+
+```{r fig.height=9, fig.width=12}
+par(mfrow=c(3, 4))
+options(repr.plot.width=12, repr.plot.height=9)
+
+
+# Helper function to plot histograms
+PlotOutcomeMeasuresHistograms = function(plotNamePrefix, data) {
+  hist(data$TotalNumEO, main=paste(plotNamePrefix, " TotalNumEO"), col=3)
+  hist(data$NumPreparedEO, main=paste(plotNamePrefix, " NumPreparedEO"), col=3)
+  hist(data$NumMeatEO, main=paste(plotNamePrefix, " NumMeatEO"), col=3)
+  hist(data$NumFruitVegEO, main=paste(plotNamePrefix, " NumFruitVegEO"), col=3)
+}
+
+# Get Baseline data only across all participants
+baseline_d = d[MeasureNum <= 3]
+PlotOutcomeMeasuresHistograms("Baseline", baseline_d)
+
+# Get experiment data for control group participants
+exper_d_control = d[MeasureNum > 3 & TreatmentLevel == 'Control']
+PlotOutcomeMeasuresHistograms("Experiment Control", exper_d_control)
+
+
+# Get experiment data for treatment group participants
+exper_d_treatment = d[MeasureNum > 3 & TreatmentLevel == 'Recipe']
+PlotOutcomeMeasuresHistograms("Experiment Treatment", exper_d_treatment)
+```
+
+```{r fig.height=4, fig.width=12}
+
+plotBoxplots = function(xVarData, xVarName, indexVar, indexVarName, yVarData, yVarName, legendNames) {
+  p = ggplot(d, aes(as.factor(indexVar), yVarData)) +
+    labs(color=xVarName) + 
+    theme_bw() + 
+    ggtitle(paste(yVarName, "by", xVarName)) +
+    xlab(indexVarName) + 
+    scale_colour_discrete(labels=legendNames) +
+    geom_boxplot(aes(colour = as.factor(xVarData)))
+  return(p)
+}
+
+plotBoxplots(d$TreatmentLevel, "TreatmentLevel", d$MeasureNum, "MeasureNum", d$TotalNumEO, "TotalNumEO", levels(as.factor(d$TreatmentLevel)))
+
+#boxplot(TotalNumEO~TreatmentLevel+MeasureNum, data=d)
+```
+
+```{r fig.height=4, fig.width=12}
+plotBoxplots(d$TreatmentLevel, "TreatmentLevel", d$MeasureNum, "MeasureNum", d$NumMeatEO/d$TotalNumEO, "Ratio NumMeatEO", levels(as.factor(d$TreatmentLevel)))
+
+```
+
+# Modeling Approach 1: Binning Baseline & Experiment
+
+One sort of evaluation that we'd like to do is one where we do the following binning:
+* Bin the Baseline Outcome Measures (3 days worth) into a single aggregated outcome measure
+* Bin the Experimental Outcome Measures (7 days worth) into a single aggregated outcome measure
+* Bin the Experimental Treatment Administrations (7 days worth) into a single aggregated treatment administration
+This way, we can see generally if there is an effect across the entire time period, conditional on the amount of treatment received by participants. Note that is is relatively similar to what was discused in PS5 #1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

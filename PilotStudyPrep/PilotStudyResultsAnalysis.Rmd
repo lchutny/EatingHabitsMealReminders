@@ -1,0 +1,215 @@
+---
+title: "PilotDataAnalysis"
+author: "LC DI AZT"
+date: "12/11/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, results='hide'} 
+# load packages 
+library(data.table)
+library(foreign)
+library(multiwayvcov)
+library(lmtest)
+library(sandwich)
+library(bit64)
+```
+
+# 1 Load Data
+First load outcome measures
+
+```{r}
+raw_outcome <- fread("PilotStudyAllOutcomeMeasures.csv")
+dim(raw_outcome)
+```
+
+```{r}
+dt_outcome <- data.table(raw_outcome)
+```
+
+Now load the enrollment survey
+
+```{r}
+raw_enroll <- fread("Pilot Enrollment Survey - Eating HabitsClean.csv")
+dt_enroll <- data.table(raw_enroll)
+dim(dt_enroll)
+```
+
+Load the baseline:
+
+```{r}
+raw_baseline <- fread("PilotBaselineResults.csv")
+dt_baseline <- data.table(raw_baseline)
+dim(dt_baseline)
+```
+
+Combine baseline and outcomes: add columns to baseline to match outcomes, then use rbind to combine rowwise
+
+```{r }
+dt_baseline[,baseline := 1]
+```
+
+
+```{r}
+dt_outcome[,baseline := 0]
+```
+
+```{r}
+dt_baseline[,c("TimeZone","Country","TreatmentLevel","TreatmentNum","TreatmentSent","TreatmentReceived","BlockNo") := NA]
+```
+
+```{r}
+dt_expt <- rbind(dt_outcome,dt_baseline)
+str(dt_expt)
+```
+
+```{r}
+summary(dt_expt)
+```
+
+
+
+# 2 Create analysis columns
+
+```{r}
+dt_expt[,"FracMeatEO":=NumMeatEO/TotalNumEO]  # Ratio only
+dt_expt[baseline==0,"AvgMeatEO":= mean(FracMeatEO),by="ParticipantId"] #Average meat in treatment - not clustered for now
+dt_expt[baseline==1, "BaseMeat" := FracMeatEO]
+dt_expt[baseline==1,"TreatmentLevel" := 'Baseline']
+dt_expt
+```
+
+Simple ITT
+
+```{r}
+ITT <- dt_expt[TreatmentLevel != 'EXCLUDED',c("ParticipantId","TreatmentLevel","BlockNo","baseline","AvgMeatEO","BaseMeat")]
+```
+
+
+```{r}
+setkey(ITT,ParticipantId)
+```
+
+```{r}
+# Assign the basemeat value to each row for the participant
+ITT[,BaseMeat2:=sum(BaseMeat,na.rm=T),by="ParticipantId"][is.na(BaseMeat), BaseMeat:=BaseMeat2,]
+ITT[,BaseMeat2:=NULL]
+```
+
+```{r}
+ITT[,"ITT" := (AvgMeatEO-BaseMeat), ]
+ITT_unique <- unique(ITT)
+ITT_unique <- ITT_unique[baseline==0]
+setkey(ITT_unique,NULL)
+setkey(ITT_unique,BlockNo)
+# not an elegant way to do it
+ITT_unique[BlockNo==1, Ctrl:=ITT_unique[TreatmentLevel=='Control' & BlockNo==1,ITT]]
+ITT_unique[BlockNo==2, Ctrl:=ITT_unique[TreatmentLevel=='Control' & BlockNo==2,ITT]]
+ITT_unique[BlockNo==3, Ctrl:=ITT_unique[TreatmentLevel=='Control' & BlockNo==3,ITT]]
+ITT_unique[,Ctrl2:=NULL]
+```
+
+```{r}
+ITT_unique[,Tmt_Ctrl := (ITT-Ctrl)]
+ITT_unique
+```
+
+
+Calculate by block, and then treatment vs. control.
+
+```{r}
+results <- ITT_unique[,.(means=mean(Tmt_Ctrl),stddev=sd(Tmt_Ctrl)),by=TreatmentLevel]
+results
+```
+
+```{r}
+OneTmt <- ITT_unique[TreatmentLevel=="Recipe" | TreatmentLevel=="Reminder",.(means=mean(Tmt_Ctrl),stddev=sd(Tmt_Ctrl))]
+OneTmt
+```
+
+```{r}
+# Guesstimate at our power with ONE treatment effect
+mut <- 0.153
+muc <- 0
+sigma <- 0.283
+N <- 70
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+
+```{r}
+# Guesstimate at our power with TWO treatment effects 
+# Recipe first
+mut <- 0.093
+muc <- 0
+sigma <- 0.28
+N <- 35
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+```{r}
+# Guesstimate at our power with TWO treatment effects 
+# Reminder only
+mut <- 0.215
+muc <- 0
+sigma <- 0.332
+N <- 35
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+
+```{r}
+# Guesstimate at our power with ONE treatment effect
+# Reminder only
+mut <- 0.215
+muc <- 0
+sigma <- 0.22
+N <- 70
+alpha <- 0.05
+
+cdf_inv <- qnorm(p=alpha/2, lower.tail=FALSE)
+cdf_inv
+
+normed <- ((mut-muc)*sqrt(N))/(2*sigma)
+normed
+
+q <- normed - cdf_inv
+
+power <- pnorm(q)
+power
+```
+

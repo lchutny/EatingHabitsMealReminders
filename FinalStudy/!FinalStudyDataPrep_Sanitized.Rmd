@@ -1,0 +1,73 @@
+---
+title: "EDA-dianai"
+author: "Diana Iftimie, Alex Zhou Thorp"
+date: "12/2/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(foreign)
+library(data.table)
+library(dplyr)
+```
+
+```{r}
+# Read final study data
+exper.data = fread("FinalStudy-AllOutcomeMeasuresAndTreatmentAdministrations.csv")
+head(exper.data)
+cat("Number of Experiment Rows: ",nrow(exper.data), "\n")
+
+#Read enrollment survey data
+enroll.data = fread("FinalStudy-EnrollmentSurvey2-clean.csv")
+head(enroll.data)
+cat("Number of Enrollment Rows: ", nrow(enroll.data), "\n")
+
+#Read post-survey data
+postsvy.data = fread("PostSurveyClean.csv")
+head(postsvy.data)
+#remove duplicate (for one respondent)
+postsvy.data <- postsvy.data[!duplicated(postsvy.data$Email),]
+cat("Number of Post-Survey Rows: ", nrow(postsvy.data))
+```
+
+```{r}
+cat("Number of participants starting the enrollment survey: ",nrow(enroll.data),"\n")
+cat("Number of participants completing the enrollment survey: ",nrow(enroll.data[enroll.data$permission == "Yes" | enroll.data$permission == "No"]),"\n")
+cat("Number of participants agreeing to enroll in the experiment: ",length(unique(enroll.data[enroll.data$permission=="Yes"]$PhoneNumber)),"\n")
+cat("Number of participants setting up phone to receive control/treatment: ",length(unique(exper.data$PhoneNumber)),"\n")
+
+
+# Merge enroll and exper data frames joining on PhoneNumber
+data = inner_join(exper.data, enroll.data, by="PhoneNumber")
+head(data)
+
+#rename to enable merge of post-survey data
+colnames(postsvy.data)[colnames(postsvy.data)=="Email"] <- "email"
+
+#Make educated guess to correct email addresses to match and enable merge - deleted for PII
+#not able to map one of the post-survey responders on to the other data. Phone Number and email don't appear in other datasets
+
+#merge in the post-survey data
+data = left_join(data, postsvy.data, by="email")
+head(data)
+
+cat("Number of participants completing the post-survey: ",nrow(postsvy.data),"\n")
+cat("Number of participants matched across post-survey, experiment, and enrollment survey: ",sum(complete.cases(data$phonenumber))/10,"\n")
+cat("Post-survey respondents not matched with other data: ",setdiff(postsvy.data$email,data$email))
+
+```
+
+
+```{r}
+#create binary to easily identify which observations have post-survey response
+data$post_svy_responder <- as.numeric(!is.na(data$phonenumber))
+
+# Remove Name.x, phoneNumber, Timestamp, email, Name.y, permission
+data = data[, -which(names(data) %in% c("Name.x","PhoneNumber", "Timestamp", "email", "Name.y", "permission", "timezone", "country", "phonenumber"))]
+head(data)
+
+# Save data to file
+fwrite(data, "!FinalStudyData.csv", append = FALSE)
+```
+
